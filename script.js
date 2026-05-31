@@ -201,6 +201,87 @@ function initScrollReveal() {
   }
 })();
 
+(function initEngineCleaningReveal() {
+  const reveal = document.getElementById('engineReveal');
+  if (!reveal) return;
+
+  const frame = reveal.querySelector('.engine-cleaning-frame');
+  const halo = reveal.querySelector('.engine-halo');
+  let rafId = 0;
+  const target = { x: 50, y: 50, radius: 140 };
+  const current = { x: 50, y: 50, radius: 140 };
+
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+  const getRadius = () =>
+    clamp(Math.round(reveal.offsetWidth * 0.18), 120, 180);
+
+  const updateFrame = () => {
+    current.x += (target.x - current.x) * 0.18;
+    current.y += (target.y - current.y) * 0.18;
+    current.radius += (target.radius - current.radius) * 0.18;
+
+    frame.style.setProperty('--reveal-x', `${current.x}%`);
+    frame.style.setProperty('--reveal-y', `${current.y}%`);
+    frame.style.setProperty('--reveal-radius', `${current.radius}px`);
+    halo.style.setProperty('--reveal-x', `${current.x}%`);
+    halo.style.setProperty('--reveal-y', `${current.y}%`);
+
+    rafId = requestAnimationFrame(updateFrame);
+  };
+
+  const setReveal = (clientX, clientY) => {
+    const rect = reveal.getBoundingClientRect();
+    const x = clamp(((clientX - rect.left) / rect.width) * 100, 0, 100);
+    const y = clamp(((clientY - rect.top) / rect.height) * 100, 0, 100);
+
+    target.x = x;
+    target.y = y;
+    target.radius = getRadius();
+    frame.classList.add('active');
+  };
+
+  const hideReveal = () => {
+    target.radius = 0;
+  };
+
+  const pointerMove = (event) => {
+    const point = event.touches ? event.touches[0] : event;
+    if (!point) return;
+    setReveal(point.clientX, point.clientY);
+  };
+
+  const touchHandler = (event) => {
+    pointerMove(event);
+  };
+
+  const resizeHandler = () => {
+    target.radius = getRadius();
+  };
+
+  reveal.addEventListener('mousemove', pointerMove);
+  reveal.addEventListener('touchmove', touchHandler, { passive: true });
+  reveal.addEventListener('touchstart', touchHandler, { passive: true });
+  reveal.addEventListener('mouseleave', hideReveal);
+  reveal.addEventListener('touchend', hideReveal);
+  reveal.addEventListener('touchcancel', hideReveal);
+
+  window.addEventListener('resize', resizeHandler);
+
+  rafId = requestAnimationFrame(updateFrame);
+
+  // Cleanup is intentionally defined for future module portability.
+  return () => {
+    cancelAnimationFrame(rafId);
+    reveal.removeEventListener('mousemove', pointerMove);
+    reveal.removeEventListener('touchmove', touchHandler);
+    reveal.removeEventListener('touchstart', touchHandler);
+    reveal.removeEventListener('mouseleave', hideReveal);
+    reveal.removeEventListener('touchend', hideReveal);
+    reveal.removeEventListener('touchcancel', hideReveal);
+    window.removeEventListener('resize', resizeHandler);
+  };
+})();
+
 // ---- TESTIMONIALS SLIDER ----
 (function initTestimonialsSlider() {
   const track = document.getElementById('testimonialsTrack');

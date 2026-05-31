@@ -1,0 +1,141 @@
+.engineCleaningReveal {
+  width: 100%;
+  display: grid;
+  gap: 18px;
+}
+
+.engineCleaningFrame {
+  position: relative;
+  width: 100%;
+  min-height: 440px;
+  background: rgba(10, 10, 10, 0.26);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 32px;
+  padding: 20px;
+  overflow: hidden;
+  box-shadow: 0 32px 120px rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(12px);
+  transition: transform 0.28s ease;
+  animation: engineFloat 10s ease-in-out infinite;
+  --reveal-x: 50%;
+  --reveal-y: 50%;
+  --reveal-radius: 140px;
+}
+
+.engineImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  pointer-events: none;
+  transition: transform 0.35s ease;
+}
+
+.engineAfter {
+  mask-image: radial-gradient(
+    circle var(--reveal-radius, 0px) at var(--reveal-x, 50%)
+      var(--reveal-y, 50%),
+    rgba(255, 255, 255, 1) 0%,
+    rgba(255, 255, 255, 0.96) 52%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  -webkit-mask-image: radial-gradient(
+    circle var(--reveal-radius, 0px) at var(--reveal-x, 50%)
+      var(--reveal-y, 50%),
+    rgba(255, 255, 255, 1) 0%,
+    rgba(255, 255, 255, 0.96) 52%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  mask-mode: alpha;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  transition:
+    mask-position 0.18s ease,
+    mask-size 0.18s ease;
+}
+
+.engineHalo {
+  position: absolute;
+  left: var(--reveal-x, 50%);
+  top: var(--reveal-y, 50%);
+  width: calc(var(--reveal-radius, 0px) * 2.2);
+  height: calc(var(--reveal-radius, 0px) * 2.2);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.2),
+    rgba(255, 219, 77, 0.08) 18%,
+    transparent 52%
+  );
+  filter: blur(11px);
+  mix-blend-mode: screen;
+  transition:
+    width 0.18s ease,
+    height 0.18s ease,
+    transform 0.18s ease;
+}
+
+.engineLabel {
+  position: absolute;
+  z-index: 2;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  backdrop-filter: blur(12px);
+  background: rgba(0, 0, 0, 0.44);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.engineLabelBefore {
+  top: 18px;
+  left: 18px;
+}
+
+.engineLabelAfter {
+  top: 18px;
+  right: 18px;
+}
+
+.engineCopy {
+  display: grid;
+  gap: 10px;
+}
+
+.engineCopyTag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: rgba(245, 197, 24, 0.12);
+  color: #f5c518;
+  font-size: 0.79rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.engineCopyText {
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 1rem;
+  line-height: 1.75;
+  max-width: 520px;
+}
+
+@keyframes engineFloat {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
