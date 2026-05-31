@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manage Reviews — Lohar Auto Garage</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css" />
+  <link rel="stylesheet" href="../../css/pages.css" />
+  <meta name="robots" content="noindex,nofollow" />
+</head>
+<body>
+  <nav class="navbar scrolled" style="position:sticky;top:0;z-index:1000">
+    <div class="nav-container">
+      <a href="/" class="nav-logo"><span class="logo-icon">⚙</span><span class="logo-text">LOHAR <span class="logo-accent">ADMIN</span></span></a>
+      <div style="margin-left:auto;display:flex;gap:12px;align-items:center">
+        <span id="adminName" style="color:rgba(255,255,255,0.6);font-size:0.88rem"></span>
+        <a href="/" class="btn-outline btn-sm">View Site</a>
+        <button onclick="logoutUser()" class="btn-secondary btn-sm">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <a href="index.html" class="admin-nav-link"><span class="icon">📊</span> Dashboard</a>
+      <a href="products.html" class="admin-nav-link"><span class="icon">📦</span> Products</a>
+      <a href="orders.html" class="admin-nav-link"><span class="icon">🛒</span> Orders</a>
+      <a href="customers.html" class="admin-nav-link"><span class="icon">👥</span> Customers</a>
+      <a href="coupons.html" class="admin-nav-link"><span class="icon">🎫</span> Coupons</a>
+      <a href="dealers.html" class="admin-nav-link"><span class="icon">🤝</span> Dealer Inquiries</a>
+      <a href="reviews.html" class="admin-nav-link active"><span class="icon">⭐</span> Reviews</a>
+    </aside>
+
+    <main class="admin-main">
+      <div class="admin-page-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+        <div class="admin-page-title" style="margin-bottom:0">Review Moderation</div>
+      </div>
+
+      <div class="glass-card" style="padding:24px;">
+        <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-bottom:20px">
+          <select id="reviewStatusFilter" onchange="loadAdminReviews()" style="max-width:200px; margin-bottom:0">
+            <option value="false">⏳ Pending Approval</option>
+            <option value="true">✅ Approved Reviews</option>
+          </select>
+        </div>
+
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Customer</th>
+                <th>Product</th>
+                <th>Rating</th>
+                <th>Title & Comments</th>
+                <th>Verification</th>
+                <th>Submitted Date</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="reviewsTableBody">
+              <tr><td colspan="7" style="text-align:center; color:rgba(255,255,255,0.4)">Loading reviews...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../../js/api.js"></script>
+  <script src="../../js/notifications.js"></script>
+  <script src="../../js/auth.js"></script>
+  <script>
+    let reviewsList = [];
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!isLoggedIn()) return window.location.href = '/pages/auth.html?redirect=/pages/admin/reviews.html';
+      try {
+        const { user } = await AuthAPI.me();
+        if (user.role !== 'admin') { window.location.href = '/'; return; }
+        document.getElementById('adminName').textContent = user.name;
+        loadAdminReviews();
+      } catch { window.location.href = '/pages/auth.html'; }
+    });
+
+    async function loadAdminReviews() {
+      try {
+        const isApprovedVal = document.getElementById('reviewStatusFilter').value;
+        const res = await ReviewsAPI.list({ approved: isApprovedVal });
+        reviewsList = res.reviews || [];
+
+        const tbody = document.getElementById('reviewsTableBody');
+        if (reviewsList.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:rgba(255,255,255,0.4)">No reviews in this category</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = reviewsList.map(r => `
+          <tr>
+            <td><strong>${r.user?.name || 'Customer'}</strong><br><small style="color:rgba(255,255,255,0.4)">${r.user?.email || ''}</small></td>
+            <td><strong>${r.product?.name || 'Product'}</strong></td>
+            <td><span style="color:#f5c518; font-size:1.1rem">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</span></td>
+            <td>
+              <strong>${r.title}</strong><br>
+              <span style="font-size:0.8rem; color:rgba(255,255,255,0.6); display:block; max-width:250px; white-space:normal; line-height:1.4">${r.body}</span>
+            </td>
+            <td>
+              <span style="font-size:0.75rem; font-weight:700; color:${r.isVerifiedPurchase ? '#10b981' : 'rgba(255,255,255,0.4)'}">
+                ${r.isVerifiedPurchase ? '✓ Verified Buyer' : 'Guest Review'}
+              </span>
+            </td>
+            <td>${new Date(r.createdAt).toLocaleDateString('en-IN')}</td>
+            <td>
+              <div style="display:flex; gap:8px">
+                ${!r.isApproved ? `<button onclick="approveReview('${r._id}')" class="action-btn" style="background:#10b981; color:#fff">Approve</button>` : ''}
+                <button onclick="deleteReview('${r._id}')" class="action-btn" style="background:#ef4444; color:#fff">Delete</button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      } catch (err) { toast.error('Failed to load reviews'); }
+    }
+
+    async function approveReview(id) {
+      try {
+        await ReviewsAPI.approve(id, true);
+        toast.success('Review approved and published! ⭐');
+        loadAdminReviews();
+      } catch (err) { toast.error('Failed to approve review'); }
+    }
+
+    async function deleteReview(id) {
+      if (!confirm('Are you sure you want to permanently delete this review?')) return;
+      try {
+        await ReviewsAPI.delete(id);
+        toast.info('Review deleted');
+        loadAdminReviews();
+      } catch (err) { toast.error('Failed to delete review'); }
+    }
+  </script>
+</body>
+</html>

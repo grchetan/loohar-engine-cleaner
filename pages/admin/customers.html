@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manage Customers — Lohar Auto Garage</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css" />
+  <link rel="stylesheet" href="../../css/pages.css" />
+  <meta name="robots" content="noindex,nofollow" />
+</head>
+<body>
+  <nav class="navbar scrolled" style="position:sticky;top:0;z-index:1000">
+    <div class="nav-container">
+      <a href="/" class="nav-logo"><span class="logo-icon">⚙</span><span class="logo-text">LOHAR <span class="logo-accent">ADMIN</span></span></a>
+      <div style="margin-left:auto;display:flex;gap:12px;align-items:center">
+        <span id="adminName" style="color:rgba(255,255,255,0.6);font-size:0.88rem"></span>
+        <a href="/" class="btn-outline btn-sm">View Site</a>
+        <button onclick="logoutUser()" class="btn-secondary btn-sm">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <a href="index.html" class="admin-nav-link"><span class="icon">📊</span> Dashboard</a>
+      <a href="products.html" class="admin-nav-link"><span class="icon">📦</span> Products</a>
+      <a href="orders.html" class="admin-nav-link"><span class="icon">🛒</span> Orders</a>
+      <a href="customers.html" class="admin-nav-link active"><span class="icon">👥</span> Customers</a>
+      <a href="coupons.html" class="admin-nav-link"><span class="icon">🎫</span> Coupons</a>
+      <a href="dealers.html" class="admin-nav-link"><span class="icon">🤝</span> Dealer Inquiries</a>
+      <a href="reviews.html" class="admin-nav-link"><span class="icon">⭐</span> Reviews</a>
+    </aside>
+
+    <main class="admin-main">
+      <div class="admin-page-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+        <div class="admin-page-title" style="margin-bottom:0">Registered Customers</div>
+      </div>
+
+      <div class="glass-card" style="padding:24px;">
+        <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-bottom:20px">
+          <input type="text" id="custSearchInput" placeholder="Search by name, email, phone..." style="max-width:300px; margin-bottom:0">
+        </div>
+
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Customer Name</th>
+                <th>Email Address</th>
+                <th>Phone Number</th>
+                <th>Saved Addresses</th>
+                <th>Registered Date</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="customersTableBody">
+              <tr><td colspan="7" style="text-align:center; color:rgba(255,255,255,0.4)">Loading customers...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../../js/api.js"></script>
+  <script src="../../js/notifications.js"></script>
+  <script src="../../js/auth.js"></script>
+  <script>
+    let customersList = [];
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!isLoggedIn()) return window.location.href = '/pages/auth.html?redirect=/pages/admin/customers.html';
+      try {
+        const { user } = await AuthAPI.me();
+        if (user.role !== 'admin') { window.location.href = '/'; return; }
+        document.getElementById('adminName').textContent = user.name;
+        
+        // Listen to search
+        document.getElementById('custSearchInput').addEventListener('input', (e) => {
+          clearTimeout(window.searchDebounce);
+          window.searchDebounce = setTimeout(() => {
+            loadCustomers(e.target.value);
+          }, 400);
+        });
+
+        loadCustomers();
+      } catch { window.location.href = '/pages/auth.html'; }
+    });
+
+    async function loadCustomers(search = '') {
+      try {
+        const params = {};
+        if (search) params.search = search;
+        const res = await AdminAPI.customers(params);
+        customersList = res.users || [];
+
+        const tbody = document.getElementById('customersTableBody');
+        if (customersList.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:rgba(255,255,255,0.4)">No customers registered</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = customersList.map(c => `
+          <tr>
+            <td><strong>${c.name}</strong></td>
+            <td>${c.email}</td>
+            <td>${c.phone || '-'}</td>
+            <td>${c.addresses?.length || 0} address(es)</td>
+            <td>${new Date(c.createdAt).toLocaleDateString('en-IN')}</td>
+            <td>
+              <span style="font-weight:700; color:${c.isActive ? '#10b981' : '#ef4444'}">
+                ${c.isActive ? '● Active' : '● Blocked'}
+              </span>
+            </td>
+            <td>
+              <button onclick="toggleCustomerState('${c._id}', ${!c.isActive})" class="action-btn" style="background:${c.isActive ? '#ef4444' : '#10b981'}; color:#fff; min-width:80px">
+                ${c.isActive ? 'Block' : 'Activate'}
+              </button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (err) { toast.error('Failed to load customers'); }
+    }
+
+    async function toggleCustomerState(id, newState) {
+      if (!confirm(`Are you sure you want to ${newState ? 'activate' : 'block'} this customer account?`)) return;
+      try {
+        await AdminAPI.toggleCustomer(id, newState);
+        toast.success(`Customer account status updated successfully`);
+        loadCustomers(document.getElementById('custSearchInput').value);
+      } catch (err) { toast.error('Failed to update account status'); }
+    }
+  </script>
+</body>
+</html>

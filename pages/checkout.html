@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Secure Checkout — Lohar Auto Garage</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+  <!-- Razorpay SDK -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body class="bg-dark">
+
+  <!-- ======= NAVBAR ======= -->
+  <nav id="navbar" class="navbar scrolled">
+    <div class="nav-container">
+      <a href="/" class="nav-logo"><img src="../assets/images/logo.png" alt="Lohar Auto Logo" class="logo-img" /></a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/" class="nav-link">Home</a></li>
+        <li><a href="/pages/products.html" class="nav-link">Products</a></li>
+      </ul>
+      <span style="font-size:0.85rem; color:rgba(255,255,255,0.4)" id="checkoutUserEmail">email@domain.com</span>
+    </div>
+  </na  <!-- ======= SECURE CHECKOUT BODY ======= -->
+  <section style="padding: 140px 0 80px;">
+    <div class="container">
+      <h2 style="color:#fff; font-family:Outfit,sans-serif; margin-bottom:30px; font-weight:700">Secure Checkout</h2>
+
+      <div class="checkout-grid" style="display:grid; grid-template-columns:1.8fr 1.2fr; gap:30px">
+        
+        <!-- Left: Address & Payment Methods -->
+        <div class="checkout-left-col" style="display:flex; flex-direction:column; gap:24px">
+          
+          <!-- 1. Shipping Address Selection -->
+          <div class="glass-card" style="padding:24px">
+            <h3 style="color:#fff; font-family:Outfit; margin-bottom:15px">1. Shipping Address</h3>
+            
+            <div id="savedAddressesList">
+              <!-- Dynamically populated -->
+            </div>
+
+            <button onclick="showNewAddressForm()" class="btn-secondary btn-sm" style="margin-top:10px; width:100%; border-style:dashed;">+ Add New Address</button>
+            
+            <!-- Add New Address Form (hidden initially unless no addresses exist) -->
+            <div id="newAddressForm" style="display:none; margin-top:20px; border-top:1px solid rgba(255,255,255,0.08); padding-top:20px">
+              <h4 style="color:#fff; margin-bottom:15px">New Shipping Address</h4>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
+                <div class="form-group">
+                  <label>Full Name *</label>
+                  <input type="text" id="shippingName" placeholder="Recipient's Name">
+                </div>
+                <div class="form-group">
+                  <label>Phone Number *</label>
+                  <input type="tel" id="shippingPhone" placeholder="Mobile Number">
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Address Line 1 *</label>
+                <input type="text" id="shippingLine1" placeholder="Flat, House no., Building, Company">
+              </div>
+              <div class="form-group">
+                <label>Address Line 2 (Landmark)</label>
+                <input type="text" id="shippingLine2" placeholder="Area, Colony, Street, Sector">
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px">
+                <div class="form-group">
+                  <label>City *</label>
+                  <input type="text" id="shippingCity" placeholder="City">
+                </div>
+                <div class="form-group">
+                  <label>State *</label>
+                  <input type="text" id="shippingState" placeholder="State">
+                </div>
+                <div class="form-group">
+                  <label>Pincode *</label>
+                  <input type="text" id="shippingPincode" placeholder="6-digit ZIP">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. GST & Tax Billing Info (Optional) -->
+          <div class="glass-card" style="padding:24px">
+            <h3 style="color:#fff; font-family:Outfit; margin-bottom:6px">2. Business / GST Details <span style="font-size:0.8rem; color:rgba(255,255,255,0.4)">(Optional)</span></h3>
+            <p style="font-size:0.8rem; color:rgba(255,255,255,0.5); margin-bottom:15px">Claim input tax credit (ITC) for your garage or workshop.</p>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
+              <div class="form-group" style="margin-bottom:0">
+                <label>Company Name</label>
+                <input type="text" id="companyNameInput" placeholder="e.g. Lohar Garage Service">
+              </div>
+              <div class="form-group" style="margin-bottom:0">
+                <label>GSTIN</label>
+                <input type="text" id="gstNumberInput" placeholder="22AAAAA0000A1Z5">
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Payment Method -->
+          <div class="glass-card" style="padding:24px">
+            <h3 style="color:#fff; font-family:Outfit; margin-bottom:15px">3. Payment Method</h3>
+            
+            <div class="payment-methods-grid" style="display:flex; flex-direction:column; gap:12px">
+              
+              <label class="payment-option-label" style="display:flex; align-items:center; gap:12px; cursor:pointer; padding:15px; border:1px solid rgba(255,255,255,0.1); border-radius:10px; background:rgba(255,255,255,0.02)">
+                <input type="radio" name="paymentMethod" value="razorpay" checked style="accent-color:#f5c518">
+                <div>
+                  <strong style="color:#fff; font-size:0.92rem; display:block">Pay Online (UPI, Cards, Netbanking)</strong>
+                  <span style="font-size:0.75rem; color:rgba(255,255,255,0.5)">Pay securely via UPI (Google Pay, PhonePe), Cards, or Netbanking.</span>
+                </div>
+              </label>
+
+              <label class="payment-option-label" style="display:flex; align-items:center; gap:12px; cursor:pointer; padding:15px; border:1px solid rgba(255,255,255,0.1); border-radius:10px; background:rgba(255,255,255,0.02)">
+                <input type="radio" name="paymentMethod" value="cod" style="accent-color:#f5c518">
+                <div>
+                  <strong style="color:#fff; font-size:0.92rem; display:block">Cash On Delivery</strong>
+                  <span style="font-size:0.75rem; color:rgba(255,255,255,0.5)">Pay in cash or UPI when the courier delivers your package.</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div class="glass-card" style="padding:20px">
+            <label style="color:#fff; font-weight:600; font-size:0.9rem; display:block; margin-bottom:8px">Delivery Instructions / Notes</label>
+            <input type="text" id="orderNotesInput" placeholder="e.g. Leave at gate, call before delivery" style="margin-bottom:0">
+          </div>
+
+        </div>
+
+        <!-- Right: Order Summary & Placement -->
+        <div class="checkout-right-col">
+          <div class="glass-card" style="padding:24px; position:sticky; top:120px">
+            <h3 style="color:#fff; font-family:Outfit; margin-bottom:15px">Order Summary</h3>
+            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.08); margin: 15px 0;">
+
+            <!-- Checkout items list -->
+            <div id="checkoutItems" style="max-height:180px; overflow-y:auto; margin-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:10px">
+              <!-- Dynamically populated -->
+            </div>
+
+            <!-- Coupon application form -->
+            <div class="coupon-apply-row" style="display:flex; gap:10px; margin-bottom:15px">
+              <input type="text" id="couponCodeInput" placeholder="Enter coupon code (e.g. WELCOME10)" style="margin-bottom:0">
+              <button id="couponApplyBtn" class="btn-primary" style="padding: 10px 18px" onclick="applyCoupon()">Apply</button>
+            </div>
+            <div id="couponSuccessMessage" style="display:none; font-size:0.8rem; color:#10b981; font-weight:600; margin-bottom:15px"></div>
+
+            <div class="cart-total-row" style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Subtotal</span><span id="summarySubtotal">₹0</span></div>
+            <div class="cart-total-row" style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>GST (18%)</span><span id="summaryGST">₹0</span></div>
+            <div class="cart-total-row" style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Delivery Charges</span><span id="summaryShipping">₹0</span></div>
+            
+            <div class="cart-total-row" id="summaryDiscountRow" style="display:none; color:#10b981; justify-content:space-between; margin-bottom:8px;">
+              <span>Coupon Discount</span>
+              <span id="summaryDiscount">- ₹0</span>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.08); margin: 15px 0;">
+            <div class="cart-total-row grand-total" style="font-size:1.2rem; display:flex; justify-content:space-between; font-weight:800;"><span>Total Payable</span><span id="summaryTotal" style="color:#f5c518">₹0</span></div>
+
+            <button id="placeOrderBtn" class="btn-primary btn-full" style="margin-top: 24px; padding: 14px; font-weight:800; font-size:1.05rem; background:#f5c518; color:#000; border-color:#f5c518;" onclick="placeOrder()">Confirm Order</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= FOOTER ======= -->
+  <footer class="footer">
+    <div class="footer-bottom">
+      <div class="container">
+        <p>© <span class="current-year">2026</span> Lohar Auto Garage. All Rights Reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- E-Commerce JS Modules -->
+  <script src="../js/api.js"></script>
+  <script src="../js/notifications.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/cart.js"></script>
+  <script src="../js/checkout.js"></script>
+</body>
+</html>

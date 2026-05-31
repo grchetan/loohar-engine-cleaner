@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manage Dealer Inquiries — Lohar Auto Garage</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css" />
+  <link rel="stylesheet" href="../../css/pages.css" />
+  <meta name="robots" content="noindex,nofollow" />
+</head>
+<body>
+  <nav class="navbar scrolled" style="position:sticky;top:0;z-index:1000">
+    <div class="nav-container">
+      <a href="/" class="nav-logo"><span class="logo-icon">⚙</span><span class="logo-text">LOHAR <span class="logo-accent">ADMIN</span></span></a>
+      <div style="margin-left:auto;display:flex;gap:12px;align-items:center">
+        <span id="adminName" style="color:rgba(255,255,255,0.6);font-size:0.88rem"></span>
+        <a href="/" class="btn-outline btn-sm">View Site</a>
+        <button onclick="logoutUser()" class="btn-secondary btn-sm">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <a href="index.html" class="admin-nav-link"><span class="icon">📊</span> Dashboard</a>
+      <a href="products.html" class="admin-nav-link"><span class="icon">📦</span> Products</a>
+      <a href="orders.html" class="admin-nav-link"><span class="icon">🛒</span> Orders</a>
+      <a href="customers.html" class="admin-nav-link"><span class="icon">👥</span> Customers</a>
+      <a href="coupons.html" class="admin-nav-link"><span class="icon">🎫</span> Coupons</a>
+      <a href="dealers.html" class="admin-nav-link active"><span class="icon">🤝</span> Dealer Inquiries</a>
+      <a href="reviews.html" class="admin-nav-link"><span class="icon">⭐</span> Reviews</a>
+    </aside>
+
+    <main class="admin-main">
+      <div class="admin-page-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+        <div class="admin-page-title" style="margin-bottom:0">Dealer & Workshop Inquiries</div>
+      </div>
+
+      <div class="glass-card" style="padding:24px;">
+        <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-bottom:20px">
+          <select id="dealerStatusFilter" onchange="loadDealerInquiries()" style="max-width:200px; margin-bottom:0">
+            <option value="">All Statuses</option>
+            <option value="new">🆕 New</option>
+            <option value="contacted">📞 Contacted</option>
+            <option value="qualified">✅ Qualified</option>
+            <option value="rejected">❌ Rejected</option>
+          </select>
+        </div>
+
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Applicant</th>
+                <th>Business Name</th>
+                <th>City & State</th>
+                <th>Type</th>
+                <th>Phone Number</th>
+                <th>Date Received</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="dealersTableBody">
+              <tr><td colspan="8" style="text-align:center; color:rgba(255,255,255,0.4)">Loading inquiries...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Notes/Status Modal -->
+      <div id="dealerModal" class="modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:2000; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px)">
+        <div class="modal-content glass-card" style="width:500px; max-width:95vw; padding:28px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
+            <h3 style="color:#fff; font-family:Outfit; margin:0">Manage Inquiry</h3>
+            <button onclick="closeDealerModal()" style="background:none; border:none; color:rgba(255,255,255,0.6); font-size:1.8rem; cursor:pointer">&times;</button>
+          </div>
+
+          <form id="dealerForm" onsubmit="saveDealerInquiry(event)">
+            <input type="hidden" id="editInquiryId">
+
+            <div class="form-group">
+              <label>Applicant Details</label>
+              <p style="color:rgba(255,255,255,0.7); font-size:0.88rem; line-height:1.4" id="detApplicantInfo">-</p>
+            </div>
+
+            <div class="form-group">
+              <label>Inquiry Status *</label>
+              <select id="inqStatus" required>
+                <option value="new">New</option>
+                <option value="contacted">Contacted</option>
+                <option value="qualified">Qualified</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Admin Internal Notes</label>
+              <textarea id="inqNotes" rows="4" placeholder="Enter follow-up call notes, pricing discusions, lead progress..."></textarea>
+            </div>
+
+            <button type="submit" id="saveInqBtn" class="btn-primary btn-full" style="margin-top:12px; padding:12px">⚡ Update Inquiry</button>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../../js/api.js"></script>
+  <script src="../../js/notifications.js"></script>
+  <script src="../../js/auth.js"></script>
+  <script>
+    let inquiriesList = [];
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!isLoggedIn()) return window.location.href = '/pages/auth.html?redirect=/pages/admin/dealers.html';
+      try {
+        const { user } = await AuthAPI.me();
+        if (user.role !== 'admin') { window.location.href = '/'; return; }
+        document.getElementById('adminName').textContent = user.name;
+        loadDealerInquiries();
+      } catch { window.location.href = '/pages/auth.html'; }
+    });
+
+    async function loadDealerInquiries() {
+      try {
+        const status = document.getElementById('dealerStatusFilter').value;
+        const params = {};
+        if (status) params.status = status;
+
+        const res = await DealerAPI.list(params);
+        inquiriesList = res.inquiries || [];
+
+        const tbody = document.getElementById('dealersTableBody');
+        if (inquiriesList.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:rgba(255,255,255,0.4)">No inquiries received</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = inquiriesList.map(i => {
+          let statusColor = '#f5c518';
+          if (i.status === 'qualified') statusColor = '#10b981';
+          else if (i.status === 'rejected') statusColor = '#ef4444';
+          
+          return `
+            <tr>
+              <td><strong>${i.name}</strong><br><small style="color:rgba(255,255,255,0.4)">${i.email || ''}</small></td>
+              <td>${i.businessName}</td>
+              <td>${i.city}, ${i.state || 'India'}</td>
+              <td>${(i.businessType || 'Dealer').toUpperCase()}</td>
+              <td><a href="tel:${i.phone}" style="color:#fff; font-weight:700">${i.phone}</a></td>
+              <td>${new Date(i.createdAt).toLocaleDateString('en-IN')}</td>
+              <td><span style="font-weight:700; color:${statusColor}">● ${i.status.toUpperCase()}</span></td>
+              <td>
+                <button onclick="manageInquiry('${i._id}')" class="action-btn action-view" style="background:#f5c518; color:#000">Manage</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      } catch (err) { toast.error('Failed to load dealer inquiries'); }
+    }
+
+    function manageInquiry(id) {
+      const inq = inquiriesList.find(item => item._id === id);
+      if (!inq) return;
+
+      document.getElementById('editInquiryId').value = inq._id;
+      document.getElementById('detApplicantInfo').innerHTML = `
+        <strong>${inq.name}</strong> (${inq.phone})<br>
+        Business: ${inq.businessName}<br>
+        Location: ${inq.city}, ${inq.state || ''}<br>
+        Business Type: ${inq.businessType || ''}<br>
+        ${inq.message ? `Message: "${inq.message}"` : ''}
+      `;
+      document.getElementById('inqStatus').value = inq.status;
+      document.getElementById('inqNotes').value = inq.notes || '';
+
+      document.getElementById('dealerModal').style.display = 'flex';
+    }
+
+    function closeDealerModal() {
+      document.getElementById('dealerModal').style.display = 'none';
+    }
+
+    async function saveDealerInquiry(e) {
+      e.preventDefault();
+      const saveBtn = document.getElementById('saveInqBtn');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Updating...';
+
+      const id = document.getElementById('editInquiryId').value;
+      const status = document.getElementById('inqStatus').value;
+      const notes = document.getElementById('inqNotes').value.trim();
+
+      try {
+        await DealerAPI.update(id, { status, notes });
+        toast.success('Inquiry details updated successfully');
+        closeDealerModal();
+        loadDealerInquiries();
+      } catch (err) {
+        toast.error(err.message || 'Failed to update inquiry');
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = '⚡ Update Inquiry';
+      }
+    }
+  </script>
+</body>
+</html>

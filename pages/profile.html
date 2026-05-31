@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Profile — Lohar Auto Garage</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+</head>
+<body class="bg-dark">
+
+  <!-- ======= NAVBAR ======= -->
+  <nav id="navbar" class="navbar scrolled">
+    <div class="nav-container">
+      <a href="/" class="nav-logo"><img src="../assets/images/logo.png" alt="Lohar Auto Logo" class="logo-img" /></a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/" class="nav-link">Home</a></li>
+        <li><a href="/pages/products.html" class="nav-link">Products</a></li>
+        <li><a href="/pages/orders.html" class="nav-link">My Orders</a></li>
+      </ul>
+      <a href="https://wa.me/919999999999" target="_blank" class="nav-cta">WhatsApp Us</a>
+    </div>
+  </nav>
+
+  <!-- ======= HEADER ======= -->
+  <section class="page-header">
+    <div class="container text-center">
+      <h1 class="page-title">Manage <span class="highlight-text">Profile</span></h1>
+      <p class="page-subtitle">Update your personal details and shipping address book</p>
+    </div>
+  </section>
+
+  <!-- ======= PROFILE CONTAINER ======= -->
+  <section style="padding: 40px 0 80px;">
+    <div class="container" style="max-width: 900px;">
+      
+      <!-- Loader -->
+      <div id="profileLoader" class="loader-wrapper">
+        <div class="spinner"></div>
+        <p>Loading your profile details...</p>
+      </div>
+
+      <div id="profileContent" style="display:none; display:grid; grid-template-columns:1.1fr 0.9fr; gap:30px">
+        
+        <!-- Left: Profile Details & Saved Addresses -->
+        <div class="profile-left-col" style="display:flex; flex-direction:column; gap:24px">
+          
+          <!-- Profile details update -->
+          <div class="glass-card" style="padding:24px">
+            <h3 style="color:#fff; font-family:Outfit; font-size:1.15rem; margin-bottom:15px">Personal Details</h3>
+            <form onsubmit="updateProfileDetails(event)">
+              <div class="form-group">
+                <label>Email Address <span style="font-size:0.75rem; color:rgba(255,255,255,0.3)">(Read Only)</span></label>
+                <input type="email" id="profileEmailInput" readonly style="background:rgba(255,255,255,0.02); color:rgba(255,255,255,0.4)">
+              </div>
+              <div class="form-group">
+                <label>Full Name *</label>
+                <input type="text" id="profileNameInput" required>
+              </div>
+              <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" id="profilePhoneInput" placeholder="+91 XXXXX XXXXX">
+              </div>
+              <button type="submit" id="saveProfileBtn" class="btn-primary" style="width:100%; padding:14px; font-weight:800;">Save Changes</button>
+            </form>
+          </div>
+
+          <!-- Saved addresses list -->
+          <div class="glass-card" style="padding:24px">
+            <h3 style="color:#fff; font-family:Outfit; font-size:1.15rem; margin-bottom:15px">Shipping Address Book</h3>
+            <div id="profileAddressesList">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right: Add New Address -->
+        <div class="profile-right-col">
+          <div class="glass-card" style="padding:24px; position:sticky; top:120px">
+            <h3 style="color:#fff; font-family:Outfit; font-size:1.15rem; margin-bottom:15px">Add Shipping Address</h3>
+            
+            <form id="addressForm" onsubmit="addNewProfileAddress(event)">
+              <div class="form-group">
+                <label>Address Label (e.g. Home, Garage)</label>
+                <input type="text" id="addrLabel" placeholder="Home / Work / Garage" value="Home">
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
+                <div class="form-group">
+                  <label>Full Name *</label>
+                  <input type="text" id="addrName" required placeholder="Recipient name">
+                </div>
+                <div class="form-group">
+                  <label>Phone *</label>
+                  <input type="tel" id="addrPhone" required placeholder="Mobile number">
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Address Line 1 *</label>
+                <input type="text" id="addrLine1" required placeholder="Flat/House, Shop name, Street">
+              </div>
+              <div class="form-group">
+                <label>Address Line 2 (Landmark)</label>
+                <input type="text" id="addrLine2" placeholder="Area, Landmark">
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px">
+                <div class="form-group">
+                  <label>City *</label>
+                  <input type="text" id="addrCity" required placeholder="City">
+                </div>
+                <div class="form-group">
+                  <label>State *</label>
+                  <input type="text" id="addrState" required placeholder="State">
+                </div>
+                <div class="form-group">
+                  <label>Pincode *</label>
+                  <input type="text" id="addrPincode" required placeholder="Zip code">
+                </div>
+              </div>
+
+              <div class="form-group" style="display:flex; align-items:center; gap:8px; margin-top:8px">
+                <input type="checkbox" id="addrDefault" style="width:auto; margin:0; accent-color:#f5c518">
+                <label for="addrDefault" style="margin:0; font-size:0.82rem; cursor:pointer;">Set as default shipping address</label>
+              </div>
+
+              <button type="submit" id="addAddressBtn" class="btn-primary btn-full" style="margin-top:15px; padding:14px; font-weight:800;">Add Address</button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ======= FOOTER ======= -->
+  <footer class="footer">
+    <div class="footer-bottom">
+      <div class="container">
+        <p>© <span class="current-year">2026</span> Lohar Auto Garage. All Rights Reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- E-Commerce JS Modules -->
+  <script src="../js/api.js"></script>
+  <script src="../js/notifications.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/profile.js"></script>
+</body>
+</html>

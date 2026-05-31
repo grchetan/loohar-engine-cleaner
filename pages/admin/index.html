@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard — Lohar Auto Garage</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css" />
+  <link rel="stylesheet" href="../../css/pages.css" />
+  <meta name="robots" content="noindex,nofollow" />
+</head>
+<body>
+  <nav class="navbar scrolled" style="position:sticky;top:0;z-index:1000">
+    <div class="nav-container">
+      <a href="/" class="nav-logo"><span class="logo-icon">⚙</span><span class="logo-text">LOHAR <span class="logo-accent">ADMIN</span></span></a>
+      <div style="margin-left:auto;display:flex;gap:12px;align-items:center">
+        <span id="adminName" style="color:rgba(255,255,255,0.6);font-size:0.88rem"></span>
+        <a href="/" class="btn-outline btn-sm">View Site</a>
+        <button onclick="logoutUser()" class="btn-secondary btn-sm">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <a href="index.html" class="admin-nav-link active"><span class="icon">📊</span> Dashboard</a>
+      <a href="products.html" class="admin-nav-link"><span class="icon">📦</span> Products</a>
+      <a href="orders.html" class="admin-nav-link"><span class="icon">🛒</span> Orders</a>
+      <a href="customers.html" class="admin-nav-link"><span class="icon">👥</span> Customers</a>
+      <a href="coupons.html" class="admin-nav-link"><span class="icon">🎫</span> Coupons</a>
+      <a href="dealers.html" class="admin-nav-link"><span class="icon">🤝</span> Dealer Inquiries</a>
+      <a href="reviews.html" class="admin-nav-link"><span class="icon">⭐</span> Reviews</a>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+      <div class="admin-page-title">Dashboard Overview</div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card"><div class="stat-card-icon">📦</div><div class="stat-card-value" id="statTotalOrders">—</div><div class="stat-card-label">Total Orders</div></div>
+        <div class="stat-card"><div class="stat-card-icon">🛒</div><div class="stat-card-value" id="statTodayOrders">—</div><div class="stat-card-label">Today's Orders</div></div>
+        <div class="stat-card"><div class="stat-card-icon">💰</div><div class="stat-card-value" id="statRevenue">—</div><div class="stat-card-label">Total Revenue</div></div>
+        <div class="stat-card"><div class="stat-card-icon">📅</div><div class="stat-card-value" id="statMonthRevenue">—</div><div class="stat-card-label">This Month Revenue</div></div>
+        <div class="stat-card"><div class="stat-card-icon">👥</div><div class="stat-card-value" id="statUsers">—</div><div class="stat-card-label">Total Customers</div></div>
+        <div class="stat-card"><div class="stat-card-icon">⏳</div><div class="stat-card-value" id="statPending">—</div><div class="stat-card-label">Pending Orders</div></div>
+        <div class="stat-card"><div class="stat-card-icon">⭐</div><div class="stat-card-value" id="statReviews">—</div><div class="stat-card-label">Pending Reviews</div></div>
+        <div class="stat-card"><div class="stat-card-icon">🤝</div><div class="stat-card-value" id="statInquiries">—</div><div class="stat-card-label">New Inquiries</div></div>
+      </div>
+
+      <!-- Recent Orders -->
+      <div style="background:var(--black-2);border:1px solid var(--glass-border);border-radius:var(--radius-lg);padding:28px;margin-bottom:24px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+          <h3 style="font-family:Outfit,sans-serif;font-weight:700;font-size:1.1rem">Recent Orders</h3>
+          <a href="orders.html" class="btn-outline btn-sm">View All</a>
+        </div>
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Order ID</th><th>Customer</th><th>Amount</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+            <tbody id="recentOrdersBody"><tr><td colspan="6" style="text-align:center;color:rgba(255,255,255,0.4)">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Low Stock -->
+      <div style="background:var(--black-2);border:1px solid rgba(239,68,68,0.3);border-radius:var(--radius-lg);padding:28px">
+        <h3 style="font-family:Outfit,sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:20px;color:#ef4444">⚠️ Low Stock Products</h3>
+        <div id="lowStockBody" style="display:flex;flex-direction:column;gap:10px"></div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../../js/api.js"></script>
+  <script src="../../js/notifications.js"></script>
+  <script src="../../js/auth.js"></script>
+  <script>
+    // Guard: admin only
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!isLoggedIn()) return window.location.href = '/pages/auth.html?redirect=/pages/admin/';
+      try {
+        const { user } = await AuthAPI.me();
+        if (user.role !== 'admin') { toast.error('Admin access required'); setTimeout(() => window.location.href = '/', 2000); return; }
+        saveUser(user);
+        document.getElementById('adminName').textContent = user.name;
+        loadDashboard();
+      } catch { window.location.href = '/pages/auth.html?redirect=/pages/admin/'; }
+    });
+
+    async function loadDashboard() {
+      try {
+        const { stats, recentOrders, lowStock } = await AdminAPI.dashboard();
+
+        // Stats
+        document.getElementById('statTotalOrders').textContent = stats.totalOrders;
+        document.getElementById('statTodayOrders').textContent = stats.todayOrders;
+        document.getElementById('statRevenue').textContent = `₹${stats.totalRevenue.toLocaleString('en-IN')}`;
+        document.getElementById('statMonthRevenue').textContent = `₹${stats.monthRevenue.toLocaleString('en-IN')}`;
+        document.getElementById('statUsers').textContent = stats.totalUsers;
+        document.getElementById('statPending').textContent = stats.pendingOrders;
+        document.getElementById('statReviews').textContent = stats.pendingReviews;
+        document.getElementById('statInquiries').textContent = stats.newInquiries;
+
+        // Recent Orders
+        const tbody = document.getElementById('recentOrdersBody');
+        if (recentOrders.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:rgba(255,255,255,0.4)">No orders yet</td></tr>';
+        } else {
+          tbody.innerHTML = recentOrders.map(o => `
+            <tr>
+              <td><a href="orders.html?id=${o.orderId}" style="color:var(--yellow);font-weight:700">${o.orderId}</a></td>
+              <td>${o.user?.name || 'Guest'}<br><small style="color:rgba(255,255,255,0.4)">${o.user?.email || ''}</small></td>
+              <td>₹${o.total}</td>
+              <td><span class="order-status status-${o.status.toLowerCase().replace(/ /g,'-')}">${o.status}</span></td>
+              <td>${new Date(o.createdAt).toLocaleDateString('en-IN')}</td>
+              <td><a href="orders.html?id=${o.orderId}" class="action-btn action-view">View</a></td>
+            </tr>
+          `).join('');
+        }
+
+        // Low Stock
+        const lowStockEl = document.getElementById('lowStockBody');
+        if (!lowStock || lowStock.length === 0) {
+          lowStockEl.innerHTML = '<p style="color:rgba(255,255,255,0.4)">All products have sufficient stock ✅</p>';
+        } else {
+          lowStockEl.innerHTML = lowStock.map(p => `
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:rgba(239,68,68,0.05);border-radius:10px">
+              <span>${p.name}</span>
+              <span style="color:#ef4444;font-weight:700">${p.stock} left</span>
+            </div>
+          `).join('');
+        }
+      } catch (err) { toast.error('Failed to load dashboard: ' + err.message); }
+    }
+  </script>
+</body>
+</html>
