@@ -120,6 +120,50 @@ const seed = async () => {
       tags: ['interior', 'dashboard', 'cleaner', 'car', 'inside'],
       images: ['/assets/images/dashboard_cleaner.png'],
     },
+    {
+      name: 'Lohar Glass Cleaner',
+      slug: 'lohar-glass-cleaner',
+      category: 'Exterior Care',
+      description: 'Get crystal clear visibility with our premium Lohar Glass Cleaner. Specially formulated to remove road grime, bug splatter, and water spots without leaving streaks. Safe for all tinted windows.',
+      features: [
+        'Crystal clear glass visibility',
+        'Streak-free professional finish',
+        'Removes tough bug splatter & grime',
+        'Safe on tinted windows',
+        'Water repellent action',
+      ],
+      howToUse: 'Spray directly on glass, wipe with a clean microfiber cloth, then buff with a dry side for a streak-free shine.',
+      price: 199,
+      mrp: 299,
+      stock: 450,
+      sku: 'LAG-GC-005',
+      hsn: '3402',
+      weight: 0.5,
+      tags: ['glass', 'window', 'cleaner', 'streak-free', 'exterior'],
+      images: ['/assets/images/tyre_cleaner.png'],
+    },
+    {
+      name: 'Lohar Scratch Remover',
+      slug: 'lohar-scratch-remover',
+      category: 'Exterior Care',
+      description: "Easily remove surface scratches, swirl marks, and minor paint blemishes with Lohar Scratch Remover. Restores your car's paint finish to its original gloss.",
+      features: [
+        'Removes paint scratches & swirls',
+        'Restores paint color & gloss',
+        'Safe on all clear coat finishes',
+        'Hand or machine application friendly',
+        'Micro-abrasive technology',
+      ],
+      howToUse: 'Apply a small amount on a soft applicator pad, rub gently in circular motions over scratch, allow to dry slightly, then buff clean with microfiber.',
+      price: 399,
+      mrp: 599,
+      stock: 250,
+      sku: 'LAG-SR-006',
+      hsn: '3405',
+      weight: 0.3,
+      tags: ['scratch', 'remover', 'paint', 'polish', 'exterior'],
+      images: ['/assets/images/dashboard_cleaner.png'],
+    },
   ];
 
   for (const p of products) {
@@ -133,17 +177,27 @@ const seed = async () => {
   }
 
   // Set related products
-  const [degreaser, cleaner, tyre, interior] = await Promise.all(
-    ['lohar-engine-degreaser', 'lohar-engine-cleaner', 'lohar-tyre-shine', 'lohar-interior-cleaner']
+  const [degreaser, cleaner, tyre, interior, glass, scratch] = await Promise.all(
+    ['lohar-engine-degreaser', 'lohar-engine-cleaner', 'lohar-tyre-shine', 'lohar-interior-cleaner', 'lohar-glass-cleaner', 'lohar-scratch-remover']
       .map(slug => Product.findOne({ slug }))
   );
 
-  if (degreaser && cleaner && tyre) {
+  if (degreaser && cleaner && tyre && interior && glass && scratch) {
     degreaser.relatedProducts = [cleaner._id, tyre._id, interior._id];
     cleaner.relatedProducts = [degreaser._id, tyre._id, interior._id];
-    tyre.relatedProducts = [degreaser._id, cleaner._id, interior._id];
-    interior.relatedProducts = [degreaser._id, cleaner._id, tyre._id];
-    await Promise.all([degreaser.save(), cleaner.save(), tyre.save(), interior.save()]);
+    tyre.relatedProducts = [degreaser._id, cleaner._id, glass._id];
+    interior.relatedProducts = [degreaser._id, cleaner._id, scratch._id];
+    glass.relatedProducts = [tyre._id, scratch._id, degreaser._id];
+    scratch.relatedProducts = [tyre._id, glass._id, interior._id];
+    
+    await Promise.all([
+      degreaser.save(),
+      cleaner.save(),
+      tyre.save(),
+      interior.save(),
+      glass.save(),
+      scratch.save()
+    ]);
     console.log('✅ Related products linked');
   }
 

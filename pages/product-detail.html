@@ -9,19 +9,21 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../style.css" />
   <link rel="stylesheet" href="../css/pages.css" />
+  <link rel="stylesheet" href="../css/navbar.css" />
+  <link rel="stylesheet" href="../css/footer.css" />
 </head>
 <body class="bg-dark">
 
   <!-- ======= NAVBAR ======= -->
   <nav id="navbar" class="navbar scrolled">
     <div class="nav-container">
-      <a href="/" class="nav-logo"><img src="../assets/images/logo.png" alt="Lohar Auto Logo" class="logo-img" /></a>
+      <a href="../index.html" class="nav-logo"><img src="../assets/images/logo.png" alt="Lohar Auto Logo" class="logo-img" /></a>
       <ul class="nav-links" id="navLinks">
-        <li><a href="/" class="nav-link">Home</a></li>
-        <li><a href="/pages/products.html" class="nav-link">Products</a></li>
-        <li><a href="/#about" class="nav-link">About</a></li>
-        <li><a href="/#dealer" class="nav-link">Dealers</a></li>
-        <li><a href="/#contact" class="nav-link">Contact</a></li>
+        <li><a href="../index.html" class="nav-link">Home</a></li>
+        <li><a href="products.html" class="nav-link">Products</a></li>
+        <li><a href="../index.html#about" class="nav-link">About</a></li>
+        <li><a href="../index.html#dealer" class="nav-link">Dealers</a></li>
+        <li><a href="../index.html#contact" class="nav-link">Contact</a></li>
       </ul>
       <a href="https://wa.me/919999999999" target="_blank" class="nav-cta">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -37,7 +39,7 @@
     <div class="container">
       
       <!-- Back Link -->
-      <a href="/pages/products.html" class="back-link">← Back</a>
+      <a href="products.html" class="back-link">← Back</a>
 
       <div id="productDetailLoader" class="loader-wrapper">
         <div class="spinner"></div>
@@ -62,50 +64,50 @@
           <h1 class="detail-title" id="detTitle">Product Title</h1>
           
           <div class="detail-rating-row">
-            <span class="stars" style="color: #f5c518;">★★★★★</span>
-            <span class="rating-text" id="detRatingText">4.8 (12 reviews)</span>
+            <span class="stars" id="detRatingStars" style="color: #f5c518;">☆☆☆☆☆</span>
+            <span class="rating-text" id="detRatingText">0.0 (0 reviews)</span>
           </div>
 
           <div class="detail-price-row">
-            <span class="detail-current-price" id="detPrice" style="font-size: 2rem; color: #f5c518; font-weight: 900;">₹0</span>
-            <span class="detail-mrp" id="detMrp" style="display:none; text-decoration: line-through; color: rgba(255,255,255,0.4); margin-left: 10px;">₹0</span>
+            <span class="detail-current-price" id="detPrice" style="font-size: 2rem; color: var(--yellow); font-weight: 900;">₹0</span>
+            <span class="detail-mrp" id="detMrp" style="display:none; text-decoration: line-through; color: var(--white-3); margin-left: 10px;">₹0</span>
             <span class="detail-save-badge" id="detSaveBadge" style="display:none; background: #10b981; color: #fff; font-size: 0.8rem; font-weight: 700; padding: 4px 8px; border-radius: 4px; margin-left: 10px;">Save 10%</span>
           </div>
 
-          <p class="detail-description" id="detDesc" style="font-size: 1rem; color: rgba(255,255,255,0.8); line-height: 1.6; margin-top: 15px; margin-bottom: 20px;">Description text goes here...</p>
+          <p class="detail-description" id="detDesc" style="font-size: 1rem; color: var(--white-2); line-height: 1.6; margin-top: 15px; margin-bottom: 20px;">Description text goes here...</p>
 
           <!-- Specifications Quick Info -->
           <div class="spec-quick-info" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;">
-            <div class="spec-item" style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; text-align: center;">
-              <span style="font-size: 0.75rem; color: rgba(255,255,255,0.4); display: block;">SKU</span>
-              <strong id="detSku" style="color: #fff; font-size: 0.9rem;">-</strong>
+            <div class="spec-item" style="background: rgba(27,26,23,0.03); border: 1px solid rgba(27,26,23,0.08); padding: 10px; border-radius: 8px; text-align: center;">
+              <span style="font-size: 0.75rem; color: var(--white-3); display: block;">SKU</span>
+              <strong id="detSku" style="color: var(--white); font-size: 0.9rem;">-</strong>
             </div>
-            <div class="spec-item" style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; text-align: center;">
-              <span style="font-size: 0.75rem; color: rgba(255,255,255,0.4); display: block;">HSN</span>
-              <strong id="detHsn" style="color: #fff; font-size: 0.9rem;">-</strong>
+            <div class="spec-item" style="background: rgba(27,26,23,0.03); border: 1px solid rgba(27,26,23,0.08); padding: 10px; border-radius: 8px; text-align: center;">
+              <span style="font-size: 0.75rem; color: var(--white-3); display: block;">HSN</span>
+              <strong id="detHsn" style="color: var(--white); font-size: 0.9rem;">-</strong>
             </div>
-            <div class="spec-item" style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; text-align: center;">
-              <span style="font-size: 0.75rem; color: rgba(255,255,255,0.4); display: block;">Weight</span>
-              <strong id="detWeight" style="color: #fff; font-size: 0.9rem;">-</strong>
+            <div class="spec-item" style="background: rgba(27,26,23,0.03); border: 1px solid rgba(27,26,23,0.08); padding: 10px; border-radius: 8px; text-align: center;">
+              <span style="font-size: 0.75rem; color: var(--white-3); display: block;">Weight</span>
+              <strong id="detWeight" style="color: var(--white); font-size: 0.9rem;">-</strong>
             </div>
           </div>
 
           <!-- Features List -->
           <div class="detail-features-box" style="margin-bottom: 25px;">
-            <h4 style="color: #fff; font-family: Outfit; margin-bottom: 10px;">Key Features</h4>
+            <h4 style="color: var(--white); font-family: Outfit; margin-bottom: 10px;">Key Features</h4>
             <ul class="features-list" id="detFeaturesList">
               <!-- Dynamically populated -->
             </ul>
           </div>
 
           <!-- Quantity & Purchase Block -->
-          <div class="detail-purchase-block glass-card" style="padding: 20px; border-radius: 12px; margin-bottom: 15px;">
+          <div class="detail-purchase-block glass-card" style="padding: 20px; border-radius: 12px; margin-bottom: 15px; background: rgba(255,255,255,0.6); border: 1px solid rgba(27,26,23,0.06);">
             <div class="qty-selector-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-              <span style="color: #fff; font-weight: 700;">Quantity:</span>
+              <span style="color: var(--white); font-weight: 700;">Quantity:</span>
               <div class="qty-control" style="display: flex; align-items: center; gap: 8px;">
-                <button onclick="changeQty(-1)" style="width: 36px; height: 36px; border-radius: 6px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #fff; font-size: 1.2rem; cursor: pointer;">−</button>
-                <input type="number" id="purchaseQty" value="1" min="1" max="20" readonly style="width: 45px; text-align: center; background: none; border: none; color: #fff; font-weight: 800; font-size: 1.1rem; margin: 0;">
-                <button onclick="changeQty(1)" style="width: 36px; height: 36px; border-radius: 6px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #fff; font-size: 1.2rem; cursor: pointer;">+</button>
+                <button onclick="changeQty(-1)" style="width: 36px; height: 36px; border-radius: 6px; background: rgba(27,26,23,0.04); border: 1px solid rgba(27,26,23,0.1); color: var(--white); font-size: 1.2rem; cursor: pointer;">−</button>
+                <input type="number" id="purchaseQty" value="1" min="1" max="20" readonly style="width: 45px; text-align: center; background: none; border: none; color: var(--white); font-weight: 800; font-size: 1.1rem; margin: 0;">
+                <button onclick="changeQty(1)" style="width: 36px; height: 36px; border-radius: 6px; background: rgba(27,26,23,0.04); border: 1px solid rgba(27,26,23,0.1); color: var(--white); font-size: 1.2rem; cursor: pointer;">+</button>
               </div>
             </div>
 
@@ -116,7 +118,7 @@
           </div>
 
           <!-- Wishlist toggle -->
-          <button class="wishlist-detail-btn" id="detWishlistBtn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; cursor: pointer; font-size: 0.9rem; transition: all 0.2s;">
+          <button class="wishlist-detail-btn" id="detWishlistBtn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; background: rgba(27,26,23,0.04); border: 1px solid rgba(27,26,23,0.08); border-radius: 8px; color: var(--white); cursor: pointer; font-size: 0.9rem; transition: all 0.2s;">
             <span>♡ Save to Wishlist</span>
           </button>
         </div>
@@ -129,9 +131,9 @@
   <!-- ======= HOW TO USE SECTION ======= -->
   <section class="how-to-use-section" id="howToUseSection" style="display:none">
     <div class="container">
-      <div class="glass-card instruction-card" style="padding: 24px; border-radius: 16px;">
-        <h3 style="color: #f5c518; font-family: Outfit; margin-bottom: 10px;">How to Use</h3>
-        <p id="detHowToUse" style="line-height: 1.6; color: rgba(255,255,255,0.85);"></p>
+      <div class="glass-card instruction-card" style="padding: 24px; border-radius: 16px; background: rgba(255,255,255,0.6); border: 1px solid rgba(27,26,23,0.06);">
+        <h3 style="color: var(--yellow); font-family: Outfit; margin-bottom: 10px;">How to Use</h3>
+        <p id="detHowToUse" style="line-height: 1.6; color: var(--white-2);"></p>
       </div>
     </div>
   </section>
@@ -146,9 +148,9 @@
         <div class="review-stats-col glass-card">
           <h3>Rating Summary</h3>
           <div class="overall-rating-score">
-            <span class="score-num" id="reviewsAvgScore">4.8</span>
-            <span class="score-stars">★★★★★</span>
-            <span class="score-count" id="reviewsCountLabel">Based on 12 reviews</span>
+            <span class="score-num" id="reviewsAvgScore">0.0</span>
+            <span class="score-stars" id="reviewsAvgStars">☆☆☆☆☆</span>
+            <span class="score-count" id="reviewsCountLabel">Based on 0 reviews</span>
           </div>
 
           <!-- Review Form -->
@@ -332,17 +334,34 @@
         const res = await ReviewsAPI.forProduct(productId);
         const reviews = res.reviews || [];
         
-        // Update stats
-        const avg = activeProduct.rating?.avg || 4.8;
+        // Dynamic Average & Count Calculations
         const count = reviews.length;
-        document.getElementById('reviewsAvgScore').textContent = avg.toFixed(1);
-        document.getElementById('reviewsCountLabel').textContent = `Based on ${count} reviews`;
-        document.getElementById('detRatingText').textContent = `${avg.toFixed(1)} (${count} review${count !== 1 ? 's' : ''})`;
+        const avg = count > 0 ? (reviews.reduce((acc, r) => acc + r.rating, 0) / count) : 0;
+        
+        // Update dynamic stars: ★ for filled, ☆ for empty
+        const fullStars = Math.round(avg);
+        const starStr = '★'.repeat(fullStars) + '☆'.repeat(5 - fullStars);
+
+        // Update UI Elements
+        const starsEl = document.getElementById('detRatingStars');
+        if (starsEl) starsEl.textContent = starStr;
+
+        const summaryStarsEl = document.getElementById('reviewsAvgStars');
+        if (summaryStarsEl) summaryStarsEl.textContent = starStr;
+
+        const avgEl = document.getElementById('reviewsAvgScore');
+        if (avgEl) avgEl.textContent = avg.toFixed(1);
+
+        const countLabel = document.getElementById('reviewsCountLabel');
+        if (countLabel) countLabel.textContent = `Based on ${count} review${count !== 1 ? 's' : ''}`;
+
+        const ratingText = document.getElementById('detRatingText');
+        if (ratingText) ratingText.textContent = `${avg.toFixed(1)} (${count} review${count !== 1 ? 's' : ''})`;
 
         const listEl = document.getElementById('reviewsList');
         if (count === 0) {
           listEl.innerHTML = `
-            <div style="padding: 40px; text-align: center; color: rgba(255,255,255,0.4);" class="glass-card">
+            <div style="padding: 40px; text-align: center; color: var(--white-3); background: rgba(255,255,255,0.6); border: 1px solid rgba(27,26,23,0.06);" class="glass-card">
               <p>No reviews yet. Be the first to share your experience!</p>
             </div>
           `;
@@ -350,14 +369,14 @@
         }
 
         listEl.innerHTML = reviews.map(r => `
-          <div class="review-item glass-card" style="margin-bottom:15px; padding: 20px;">
+          <div class="review-item glass-card" style="margin-bottom:15px; padding: 20px; background: rgba(255,255,255,0.6); border: 1px solid rgba(27,26,23,0.06);">
             <div style="display:flex; justify-content:space-between; margin-bottom:8px">
-              <strong>${r.user?.name || 'Verified Buyer'}</strong>
-              <span style="color:#f5c518">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</span>
+              <strong style="color: var(--white)">${r.user?.name || 'Verified Buyer'}</strong>
+              <span style="color:var(--yellow)">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</span>
             </div>
-            <h5 style="margin-bottom:6px; color:#fff">${r.title}</h5>
-            <p style="font-size:0.88rem; color:rgba(255,255,255,0.7); line-height:1.4">${r.body}</p>
-            <span style="font-size:0.75rem; color:rgba(255,255,255,0.4)">${new Date(r.createdAt).toLocaleDateString()}</span>
+            <h5 style="margin-bottom:6px; color:var(--white); font-weight: 700;">${r.title}</h5>
+            <p style="font-size:0.88rem; color:var(--white-2); line-height:1.4">${r.body}</p>
+            <span style="font-size:0.75rem; color:var(--white-3)">${new Date(r.createdAt).toLocaleDateString()}</span>
           </div>
         `).join('');
 

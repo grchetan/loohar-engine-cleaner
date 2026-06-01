@@ -1,0 +1,239 @@
+/* ===================================================
+   Lohar Auto Garage — Centralized Navbar Stylesheet
+   Pure Premium White E-Commerce D2C Design
+   =================================================== */
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 12px 0 !important;
+  background: #ffffff !important;
+  border-bottom: 1px solid rgba(27, 26, 23, 0.06) !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02) !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.nav-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  height: 50px !important;
+}
+
+.logo-img {
+  max-height: 44px !important;
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.2s ease !important;
+  display: block;
+}
+
+.logo-img:hover {
+  transform: scale(1.03);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  list-style: none;
+  padding: 0;
+}
+
+.nav-link {
+  display: block;
+  padding: 8px 18px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  font-family: 'Poppins', 'Inter', sans-serif !important;
+  color: #1b1a17 !important;
+  opacity: 0.75;
+  border-radius: 50px;
+  text-decoration: none;
+  transition: all 0.25s ease !important;
+}
+
+.nav-link:hover {
+  color: #D4AF37 !important;
+  background: rgba(214, 175, 55, 0.05) !important;
+  opacity: 1 !important;
+}
+
+.nav-link.active {
+  color: #D4AF37 !important;
+  background: rgba(214, 175, 55, 0.08) !important;
+  opacity: 1 !important;
+  font-weight: 700 !important;
+}
+
+/* Navbar Action Buttons */
+.nav-login-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 38px !important;
+  padding: 0 20px !important;
+  background: transparent !important;
+  border: 1.5px solid #1b1a17 !important;
+  color: #1b1a17 !important;
+  border-radius: 50px !important;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+  font-family: 'Poppins', sans-serif !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  white-space: nowrap;
+}
+
+.nav-login-btn:hover {
+  background: #1b1a17 !important;
+  color: #ffffff !important;
+  border-color: #1b1a17 !important;
+  transform: translateY(-2px);
+}
+
+.cart-nav-btn {
+  position: relative;
+  background: rgba(27, 26, 23, 0.04) !important;
+  border: 1px solid rgba(27, 26, 23, 0.08) !important;
+  color: #1b1a17 !important;
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 50% !important;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02) !important;
+}
+
+.cart-nav-btn:hover {
+  background: rgba(214, 175, 55, 0.08) !important;
+  border-color: #D4AF37 !important;
+  color: #D4AF37 !important;
+  transform: translateY(-2px) !important;
+}
+
+.cart-badge {
+  background: #D4AF37 !important;
+  color: #000000 !important;
+  font-weight: 800 !important;
+  box-shadow: 0 0 10px rgba(214, 175, 55, 0.4) !important;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: -6px;
+  right: -6px;
+}
+
+.nav-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 22px !important;
+  background: #25d366 !important;
+  color: #ffffff !important;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border-radius: 50px !important;
+  white-space: nowrap;
+  font-family: 'Poppins', sans-serif !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  flex-shrink: 0;
+  height: 38px !important;
+  box-shadow: 0 4px 15px rgba(37, 211, 102, 0.15) !important;
+  text-decoration: none;
+}
+
+.nav-cta:hover {
+  background: #20ba5a !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.3) !important;
+}
+
+/* Responsive Hamburger Menu */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 8px;
+  margin-left: auto;
+}
+
+.hamburger span {
+  width: 24px;
+  height: 2px;
+  background: #1b1a17;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  display: block;
+}
+
+.hamburger.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* Mobile Responsive */
+@media (max-width: 991px) {
+  .hamburger {
+    display: flex !important;
+    z-index: 1001;
+  }
+  .nav-links {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 280px;
+    height: 100vh;
+    background: #ffffff;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 100px 30px;
+    gap: 16px;
+    box-shadow: -10px 0 30px rgba(0,0,0,0.05);
+    transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1000;
+  }
+  .nav-links.active {
+    right: 0;
+  }
+  .nav-link {
+    width: 100%;
+    border-radius: 10px;
+    padding: 12px 20px;
+  }
+  .nav-container {
+    gap: 16px;
+  }
+}

@@ -460,6 +460,335 @@ document.querySelectorAll('.product-card').forEach((card) => {
   }, 1500);
 })();
 
+// ---- INTERACTIVE BEFORE/AFTER ENGINE REVEAL ----
+(function initEngineReveal() {
+  const container = document.getElementById('engineReveal');
+  const frame = container ? container.querySelector('.engine-cleaning-frame') : null;
+  const halo = container ? container.querySelector('.engine-halo') : null;
+  if (!container || !frame || !halo) return;
+
+  let rect = frame.getBoundingClientRect();
+  let targetX = 50; // percentage
+  let targetY = 50; // percentage
+  let currentX = 50;
+  let currentY = 50;
+  const ease = 0.15; // lerp smooth animation speed
+  let isHovered = false;
+
+  const updateCoords = (clientX, clientY) => {
+    rect = frame.getBoundingClientRect();
+    const x = ((clientX - rect.left) / rect.width) * 100;
+    const y = ((clientY - rect.top) / rect.height) * 100;
+    targetX = Math.max(0, Math.min(100, x));
+    targetY = Math.max(0, Math.min(100, y));
+  };
+
+  frame.addEventListener('mousemove', (e) => {
+    isHovered = true;
+    updateCoords(e.clientX, e.clientY);
+  });
+
+  frame.addEventListener('mouseenter', () => {
+    isHovered = true;
+    halo.style.opacity = '1';
+  });
+
+  frame.addEventListener('mouseleave', () => {
+    isHovered = false;
+    halo.style.opacity = '0';
+  });
+
+  // Touch Drag Support (Mobile)
+  frame.addEventListener('touchstart', (e) => {
+    isHovered = true;
+    halo.style.opacity = '1';
+    if (e.touches.length > 0) {
+      updateCoords(e.touches[0].clientX, e.touches[0].clientY);
+    }
+  }, { passive: true });
+
+  frame.addEventListener('touchmove', (e) => {
+    if (e.touches.length > 0) {
+      updateCoords(e.touches[0].clientX, e.touches[0].clientY);
+    }
+  }, { passive: true });
+
+  frame.addEventListener('touchend', () => {
+    isHovered = false;
+    halo.style.opacity = '0';
+  });
+
+  // Smooth lerp animation loop (60 FPS)
+  const animate = () => {
+    currentX += (targetX - currentX) * ease;
+    currentY += (targetY - currentY) * ease;
+
+    container.style.setProperty('--reveal-x', `${currentX}%`);
+    container.style.setProperty('--reveal-y', `${currentY}%`);
+
+    // Responsive circle radius based on current frame width
+    const width = rect.width || frame.offsetWidth || 400;
+    const revealRadius = Math.max(60, Math.min(90, width * 0.18));
+    container.style.setProperty('--reveal-radius', `${revealRadius}px`);
+
+    requestAnimationFrame(animate);
+  };
+
+  animate();
+
+  window.addEventListener('resize', () => {
+    rect = frame.getBoundingClientRect();
+  });
+})();
+
+// ---- HOME PRODUCTS CAROUSEL SLIDER ----
+(function initProductsCarousel() {
+  const carousel = document.getElementById('productsCarousel');
+  const track = document.getElementById('productsCarouselTrack');
+  const prevBtn = document.getElementById('prevProduct');
+  const nextBtn = document.getElementById('nextProduct');
+  if (!carousel || !track || !prevBtn || !nextBtn) return;
+
+  let currentSlide = 0;
+  let autoplayTimer = null;
+  
+  function getVisibleCards() {
+    return Array.from(track.querySelectorAll('.product-card')).filter(card => card.style.display !== 'none');
+  }
+  
+  function getCardsPerView() {
+    const width = window.innerWidth;
+    if (width > 1200) return 4;
+    if (width > 900) return 3;
+    if (width > 600) return 2;
+    return 1;
+  }
+  
+  function getMaxSlideIndex() {
+    const visibleCards = getVisibleCards();
+    return Math.max(0, visibleCards.length - getCardsPerView());
+  }
+
+  function slideTo(index) {
+    const visibleCards = getVisibleCards();
+    const maxIndex = getMaxSlideIndex();
+    currentSlide = Math.min(Math.max(0, index), maxIndex);
+    
+    if (visibleCards.length === 0) return;
+    
+    const card = visibleCards[0];
+    const cardWidth = card.offsetWidth;
+    const gap = window.innerWidth < 900 ? 16 : 28;
+    
+    const amount = currentSlide * (cardWidth + gap);
+    track.style.transform = `translateX(-${amount}px)`;
+    
+    // Update pagination numbers active states
+    const numbers = document.querySelectorAll('.carousel-num');
+    numbers.forEach((num, idx) => {
+      const active = idx === currentSlide;
+      num.classList.toggle('active', active);
+      num.style.color = active ? "var(--yellow)" : "var(--white)";
+      num.style.opacity = active ? "1" : "0.4";
+    });
+  }
+
+  // Dynamically generate pagination numbers based on visible cards
+  function updatePagination() {
+    const visibleCards = getVisibleCards();
+    const cardsPerView = getCardsPerView();
+    const maxIndex = Math.max(0, visibleCards.length - cardsPerView);
+    
+    const numbersContainer = document.querySelector('.products-carousel-numbers');
+    if (!numbersContainer) return;
+    
+    // Clear old numbers
+    numbersContainer.innerHTML = '';
+    
+    // Create new numbers based on maxIndex
+    for (let i = 0; i <= maxIndex; i++) {
+      const span = document.createElement('span');
+      span.className = `carousel-num ${i === currentSlide ? 'active' : ''}`;
+      span.setAttribute('data-slide', i);
+      span.style.fontFamily = "'Outfit', sans-serif";
+      span.style.fontSize = "1.1rem";
+      span.style.fontWeight = "800";
+      span.style.color = i === currentSlide ? "var(--yellow)" : "var(--white)";
+      span.style.cursor = "pointer";
+      span.style.transition = "var(--transition)";
+      span.style.opacity = i === currentSlide ? "1" : "0.4";
+      span.style.padding = "4px 8px";
+      span.innerText = String(i + 1).padStart(2, '0');
+      
+      span.addEventListener('click', () => {
+        slideTo(i);
+        resetAutoplay();
+      });
+      
+      numbersContainer.appendChild(span);
+    }
+    
+    // Disable controls if all cards fit
+    if (visibleCards.length <= cardsPerView) {
+      prevBtn.style.opacity = '0.3';
+      prevBtn.style.pointerEvents = 'none';
+      nextBtn.style.opacity = '0.3';
+      nextBtn.style.pointerEvents = 'none';
+    } else {
+      prevBtn.style.opacity = '1';
+      prevBtn.style.pointerEvents = 'auto';
+      nextBtn.style.opacity = '1';
+      nextBtn.style.pointerEvents = 'auto';
+    }
+  }
+
+  // Autoplay Logic (every 3 seconds)
+  function startAutoplay() {
+    stopAutoplay();
+    autoplayTimer = setInterval(() => {
+      const maxIndex = getMaxSlideIndex();
+      if (maxIndex > 0) {
+        if (currentSlide >= maxIndex) {
+          slideTo(0);
+        } else {
+          slideTo(currentSlide + 1);
+        }
+      }
+    }, 3000);
+  }
+
+  function stopAutoplay() {
+    if (autoplayTimer) {
+      clearInterval(autoplayTimer);
+      autoplayTimer = null;
+    }
+  }
+
+  function resetAutoplay() {
+    startAutoplay();
+  }
+
+  nextBtn.addEventListener('click', () => {
+    const maxIndex = getMaxSlideIndex();
+    if (maxIndex > 0) {
+      if (currentSlide >= maxIndex) {
+        slideTo(0); // Wrap around to first slide
+      } else {
+        slideTo(currentSlide + 1);
+      }
+    }
+    resetAutoplay();
+  });
+
+  prevBtn.addEventListener('click', () => {
+    const maxIndex = getMaxSlideIndex();
+    if (maxIndex > 0) {
+      if (currentSlide <= 0) {
+        slideTo(maxIndex); // Wrap around to last slide
+      } else {
+        slideTo(currentSlide - 1);
+      }
+    }
+    resetAutoplay();
+  });
+
+  // Dynamic Category Filtering (Tabs)
+  const filterBtns = document.querySelectorAll('.category-filter-btn');
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Toggle active button class
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      
+      const category = btn.getAttribute('data-category');
+      
+      // Reset track position before hiding cards to prevent glitchy transitions
+      track.style.transition = 'none';
+      track.style.transform = 'translateX(0px)';
+      currentSlide = 0;
+      
+      // Filter cards
+      const allCards = track.querySelectorAll('.product-card');
+      allCards.forEach(card => {
+        const isBestseller = card.getAttribute('data-bestseller') === 'true';
+        const cardCategory = card.getAttribute('data-product-category');
+        
+        if (category === 'all') {
+          card.style.display = 'flex';
+        } else if (category === 'best-sellers') {
+          card.style.display = isBestseller ? 'flex' : 'none';
+        } else {
+          card.style.display = cardCategory === category ? 'flex' : 'none';
+        }
+      });
+      
+      // Force layout recalculation and restore transitions
+      setTimeout(() => {
+        track.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
+        slideTo(0);
+        updatePagination();
+        resetAutoplay();
+      }, 50);
+    });
+  });
+
+  // Touch Swipe Gesture Support
+  let startX = 0;
+  let isSwiping = false;
+
+  carousel.addEventListener('touchstart', (e) => {
+    if (e.touches.length > 0) {
+      startX = e.touches[0].clientX;
+      isSwiping = true;
+      stopAutoplay();
+    }
+  }, { passive: true });
+
+  carousel.addEventListener('touchmove', (e) => {
+    if (!isSwiping || e.touches.length === 0) return;
+    const currentX = e.touches[0].clientX;
+    const diff = startX - currentX;
+    
+    if (Math.abs(diff) > 50) { // Swipe threshold
+      isSwiping = false;
+      const maxIndex = getMaxSlideIndex();
+      if (maxIndex > 0) {
+        if (diff > 0) {
+          // Swipe left -> Next
+          if (currentSlide < maxIndex) slideTo(currentSlide + 1);
+        } else {
+          // Swipe right -> Prev
+          if (currentSlide > 0) slideTo(currentSlide - 1);
+        }
+      }
+      resetAutoplay();
+    }
+  }, { passive: true });
+
+  carousel.addEventListener('touchend', () => {
+    isSwiping = false;
+    resetAutoplay();
+  });
+
+  // Handle window resizing
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      slideTo(currentSlide);
+      updatePagination();
+      resetAutoplay();
+    }, 100);
+  });
+
+  // Initial slide rendering and start autoplay
+  setTimeout(() => {
+    slideTo(0);
+    updatePagination();
+    startAutoplay();
+  }, 300);
+})();
+
 console.log(
   '%c LOHAR AUTO GARAGE ',
   'background: #f5c518; color: #000; font-size: 18px; font-weight: bold; padding: 8px 16px; border-radius: 8px;',

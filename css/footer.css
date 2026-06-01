@@ -1,0 +1,135 @@
+/* ===================================================
+   Lohar Auto Garage — Centralized Footer Stylesheet
+   Pure Premium E-Commerce D2C Design
+   =================================================== */
+
+.footer {
+  width: 100%;
+  font-family: 'Poppins', 'Inter', sans-serif !important;
+}
+
+.footer-top {
+  background: #f6f4f0 !important; /* var(--black-2) light cream */
+  padding: 80px 0 60px;
+  border-top: 1px solid rgba(27, 26, 23, 0.06) !important;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 60px;
+}
+
+.footer-logo {
+  margin-bottom: 16px;
+  display: inline-block;
+}
+
+.footer-logo img {
+  max-height: 48px;
+  width: auto;
+}
+
+.footer-brand-desc, .footer-desc {
+  color: #625e55 !important; /* var(--white-3) medium gray */
+  font-size: 0.9rem;
+  line-height: 1.8;
+  margin-bottom: 24px;
+  max-width: 320px;
+}
+
+.footer-socials {
+  display: flex;
+  gap: 12px;
+}
+
+.social-link {
+  width: 40px;
+  height: 40px;
+  background: rgba(27, 26, 23, 0.04) !important;
+  border: 1px solid rgba(27, 26, 23, 0.08) !important;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #625e55 !important;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.social-link:hover {
+  background: #D4AF37 !important; /* var(--yellow) */
+  color: #fcfbf9 !important;
+  border-color: #D4AF37 !important;
+  transform: translateY(-3px);
+}
+
+.footer-links-col h4 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #D4AF37 !important; /* var(--yellow) */
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+}
+
+.footer-links-col ul {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links-col a {
+  font-size: 0.9rem;
+  color: #625e55 !important; /* var(--white-3) */
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.footer-links-col a:hover {
+  color: #D4AF37 !important;
+  padding-left: 4px;
+}
+
+.footer-bottom {
+  background: #fcfbf9 !important; /* var(--black) */
+  padding: 24px 0;
+  border-top: 1px solid rgba(27, 26, 23, 0.06) !important;
+  text-align: center;
+}
+
+.footer-bottom p {
+  font-size: 0.85rem;
+  color: #625e55 !important;
+  opacity: 0.7;
+  margin: 0;
+}
+
+.footer-tagline {
+  color: rgba(214, 175, 55, 0.6) !important;
+  font-style: italic;
+  margin-top: 6px;
+  font-size: 0.82rem;
+}
+
+/* Footer Responsive styles */
+@media (max-width: 991px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+}
+
+@media (max-width: 600px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  .footer-top {
+    padding: 50px 0 40px;
+  }
+}

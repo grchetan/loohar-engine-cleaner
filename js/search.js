@@ -39,9 +39,9 @@ const renderProducts = (products) => {
 
   if (products.length === 0) {
     container.innerHTML = `
-      <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: rgba(255,255,255,0.4);">
+      <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--white-3);">
         <span style="font-size: 3rem; opacity: 0.6;">🔍</span>
-        <h3 style="color: #fff; margin-top: 15px; margin-bottom: 8px;">No Products Found</h3>
+        <h3 style="color: var(--white); margin-top: 15px; margin-bottom: 8px;">No Products Found</h3>
         <p style="font-size: 0.9rem;">Try adjusting your filters or search keywords.</p>
         <button class="btn-primary btn-sm" onclick="resetFilters()" style="margin-top: 20px;">Clear Filters</button>
       </div>
@@ -54,49 +54,58 @@ const renderProducts = (products) => {
     const discount = p.mrp > p.price ? Math.round(((p.mrp - p.price) / p.mrp) * 100) : 0;
     
     return `
-      <div class="product-card premium-border" data-id="${p._id}" style="padding: 16px;">
-        ${discount > 0 ? `<div class="product-discount-badge">-${discount}%</div>` : ''}
-        <button class="wishlist-toggle-btn" onclick="toggleWishlist('${p._id}', this)" data-id="${p._id}">
-          🤍
-        </button>
-        <a href="/pages/product-detail.html?slug=${p.slug}" class="product-img-link">
-          <img src="${p.images[0] || '/assets/images/hero_bottle.png'}" alt="${p.name}" class="product-card-img" style="max-height: 200px; width: 100%; object-fit: contain; margin-bottom: 12px;" onerror="this.src='/assets/images/hero_bottle.png'">
-        </a>
-        <div class="product-card-info">
-          <span class="product-card-category" style="font-size: 0.8rem; font-weight:700; color:#f5c518;">${p.category}</span>
-          <h3 class="product-card-title" style="font-size: 1.1rem; margin-top: 4px; margin-bottom: 8px;">
-            <a href="/pages/product-detail.html?slug=${p.slug}" style="color: #fff; text-decoration: none;">${p.name}</a>
-          </h3>
-          <div class="product-card-rating" style="margin-bottom: 10px; font-size: 0.85rem;">
-            <span class="star-rating" style="color: #f5c518;">★</span>
-            <span class="rating-value" style="color: #fff; font-weight:700;">${p.rating?.avg?.toFixed(1) || '4.8'}</span>
-            <span class="rating-count" style="color: rgba(255,255,255,0.5);">(${p.rating?.count || '12'} ratings)</span>
-          </div>
-          <div class="product-card-price-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-            <div class="price-box">
-              <span class="current-price" style="font-size: 1.3rem; font-weight: 800; color: #f5c518;">₹${p.price}</span>
-              ${p.mrp > p.price ? `<span class="original-price" style="font-size: 0.9rem; color: rgba(255,255,255,0.4); text-decoration: line-through; margin-left: 8px;">₹${p.mrp}</span>` : ''}
-            </div>
-            <span class="stock-status ${p.stock > 0 ? 'in-stock' : 'out-of-stock'}" style="font-size: 0.8rem; font-weight: 700; padding: 4px 8px; border-radius: 4px; background: ${p.stock > 0 ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)'}; color: ${p.stock > 0 ? '#10b981' : '#ef4444'};">
+      <div class="d2c-card fade-in" data-id="${p._id}">
+        <div class="d2c-card-media">
+          ${discount > 0 ? `<span class="d2c-badge-discount">-${discount}%</span>` : ''}
+          <button class="wishlist-toggle-btn" onclick="toggleWishlist('${p._id}', this)" data-id="${p._id}">
+            ♡
+          </button>
+          <a href="/pages/product-detail.html?slug=${p.slug}" class="d2c-img-wrap">
+            <img src="${p.images[0] || '/assets/images/hero_bottle.png'}" alt="${p.name}" class="d2c-img" onerror="this.src='/assets/images/hero_bottle.png'">
+          </a>
+        </div>
+        
+        <div class="d2c-card-content">
+          <div class="d2c-category-row">
+            <span class="d2c-category">${p.category}</span>
+            <span class="d2c-stock-status ${p.stock > 0 ? 'in-stock' : 'out-of-stock'}">
               ${p.stock > 0 ? 'In Stock' : 'Out of Stock'}
             </span>
           </div>
-          <div class="product-card-actions" style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+          
+          <h3 class="d2c-title">
+            <a href="/pages/product-detail.html?slug=${p.slug}">${p.name}</a>
+          </h3>
+          
+          <div class="d2c-rating-row">
+            <span class="d2c-stars">
+              ${'★'.repeat(Math.round(p.rating?.avg || 0))}${'☆'.repeat(5 - Math.round(p.rating?.avg || 0))}
+            </span>
+            <span class="d2c-rating-val">${p.rating?.avg !== undefined ? p.rating.avg.toFixed(1) : '0.0'}</span>
+            <span class="d2c-rating-count">(${p.rating?.count !== undefined ? p.rating.count : 0} reviews)</span>
+          </div>
+          
+          <div class="d2c-price-row">
+            <div class="d2c-price-box">
+              <span class="d2c-price">₹${p.price}</span>
+              ${p.mrp > p.price ? `<span class="d2c-mrp">₹${p.mrp}</span>` : ''}
+            </div>
+          </div>
+          
+          <div class="d2c-actions">
             <button 
-              class="btn-primary btn-sm btn-add-cart" 
+              class="d2c-btn-cart" 
               data-add-cart="${p._id}" 
               data-original-text="${originalText}"
               onclick="addToCart('${p._id}', 1, ${JSON.stringify(p).replace(/"/g, '&quot;')})"
-              style="width: 100%; padding: 12px; font-size: 0.95rem; font-weight: 800; border-radius: 8px; cursor: pointer; background: var(--yellow); border-color: var(--yellow); color: var(--black);"
               ${p.stock === 0 ? 'disabled' : ''}
             >
               ${p.stock > 0 ? originalText : 'Out of Stock'}
             </button>
             ${p.stock > 0 ? `
             <button 
-              class="btn-primary btn-sm" 
+              class="d2c-btn-buy" 
               onclick="buyNowDirect('${p._id}', ${JSON.stringify(p).replace(/"/g, '&quot;')})"
-              style="width: 100%; padding: 12px; font-size: 0.95rem; font-weight: 800; border-radius: 8px; cursor: pointer; background: #10b981; border-color: #10b981; color: #fff; box-shadow: 0 4px 12px rgba(16,185,129,0.2);"
             >
               Buy Now
             </button>
@@ -171,8 +180,8 @@ window.resetFilters = () => {
 
 // Update Filter Buttons Styling
 const updateFilterUI = () => {
-  // Update Category Pills
-  document.querySelectorAll('.filter-pill').forEach(btn => {
+  // Update Category Pills / Sidebar Options
+  document.querySelectorAll('.filter-pill, .filter-option').forEach(btn => {
     const cat = btn.getAttribute('data-category');
     btn.classList.toggle('active', cat === activeFilters.category);
   });

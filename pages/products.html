@@ -10,19 +10,21 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../style.css" />
   <link rel="stylesheet" href="../css/pages.css" />
+  <link rel="stylesheet" href="../css/navbar.css" />
+  <link rel="stylesheet" href="../css/footer.css" />
 </head>
 <body class="bg-dark">
 
   <!-- ======= NAVBAR ======= -->
   <nav id="navbar" class="navbar scrolled">
     <div class="nav-container">
-      <a href="/" class="nav-logo"><img src="../assets/images/logo.png" alt="Lohar Auto Logo" class="logo-img" /></a>
+      <a href="../index.html" class="nav-logo"><img src="../assets/images/logo.png" alt="Lohar Auto Logo" class="logo-img" /></a>
       <ul class="nav-links" id="navLinks">
-        <li><a href="/" class="nav-link">Home</a></li>
-        <li><a href="/pages/products.html" class="nav-link active">Products</a></li>
-        <li><a href="/#about" class="nav-link">About</a></li>
-        <li><a href="/#dealer" class="nav-link">Dealers</a></li>
-        <li><a href="/#contact" class="nav-link">Contact</a></li>
+        <li><a href="../index.html" class="nav-link">Home</a></li>
+        <li><a href="products.html" class="nav-link active">Products</a></li>
+        <li><a href="../index.html#about" class="nav-link">About</a></li>
+        <li><a href="../index.html#dealer" class="nav-link">Dealers</a></li>
+        <li><a href="../index.html#contact" class="nav-link">Contact</a></li>
       </ul>
       <a href="https://wa.me/919999999999" target="_blank" class="nav-cta" id="navWhatsApp">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -45,51 +47,73 @@
   </section>
 
   <!-- ======= PRODUCTS LISTING SECTION ======= -->
-  <section class="products-catalog-section">
+  <section class="products-catalog-section" style="padding: 40px 0 80px;">
     <div class="container">
       
-      <!-- Filter Bar -->
-      <div class="catalog-filter-bar glass-card" style="padding: 20px;">
-        <!-- Search -->
-        <div class="search-input-wrapper">
-          <span class="search-icon">🔍</span>
-          <input type="text" id="searchInput" placeholder="Search cleaning products..." />
-        </div>
-        
-        <!-- Category Pills -->
-        <div class="category-pills" style="margin-top: 15px; margin-bottom: 15px;">
-          <button class="filter-pill active" data-category="" onclick="filterCategory('')">All Products</button>
-          <button class="filter-pill" data-category="Engine Care" onclick="filterCategory('Engine Care')">Engine Care</button>
-          <button class="filter-pill" data-category="Exterior Care" onclick="filterCategory('Exterior Care')">Tyre & Exterior</button>
-          <button class="filter-pill" data-category="Interior Care" onclick="filterCategory('Interior Care')">Interior Care</button>
-        </div>
+      <div class="catalog-layout">
+        <!-- Left: Category Sidebar -->
+        <aside class="catalog-sidebar">
+          
+          <!-- Search Block -->
+          <div class="filter-card">
+            <h3 class="filter-title">Search</h3>
+            <div class="search-input-wrapper" style="position:relative;">
+              <input type="text" id="searchInput" placeholder="Search products..." style="width: 100%; padding: 12px 14px; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.02); color: var(--white); outline: none; font-size: 0.9rem; font-family: Inter, sans-serif;" />
+            </div>
+          </div>
+          
+          <!-- Category Block -->
+          <div class="filter-card">
+            <h3 class="filter-title">Category</h3>
+            <div class="filter-option active" data-category="" onclick="filterCategory('')" style="display: flex; align-items: center; gap: 8px; padding: 10px 0; cursor: pointer; font-size: 0.95rem; font-weight: 600; transition: color 0.2s;">
+              All Products
+            </div>
+            <div class="filter-option" data-category="Engine Care" onclick="filterCategory('Engine Care')" style="display: flex; align-items: center; gap: 8px; padding: 10px 0; cursor: pointer; font-size: 0.95rem; font-weight: 600; transition: color 0.2s;">
+              Engine Care
+            </div>
+            <div class="filter-option" data-category="Exterior Care" onclick="filterCategory('Exterior Care')" style="display: flex; align-items: center; gap: 8px; padding: 10px 0; cursor: pointer; font-size: 0.95rem; font-weight: 600; transition: color 0.2s;">
+              Tyre & Exterior
+            </div>
+            <div class="filter-option" data-category="Interior Care" onclick="filterCategory('Interior Care')" style="display: flex; align-items: center; gap: 8px; padding: 10px 0; cursor: pointer; font-size: 0.95rem; font-weight: 600; transition: color 0.2s;">
+              Interior Care
+            </div>
+          </div>
+          
+          <!-- Sorting Block -->
+          <div class="filter-card">
+            <h3 class="filter-title">Sort By</h3>
+            <select id="sortSelect" onchange="filterSort(this.value)" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.02); color: var(--white); cursor: pointer; font-size: 0.9rem; outline: none;">
+              <option value="featured">Recommended</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+              <option value="rating">Customer Rating</option>
+            </select>
+          </div>
+          
+          <!-- Price Range Block -->
+          <div class="filter-card">
+            <h3 class="filter-title">Price Range</h3>
+            <select id="priceFilterSelect" onchange="filterPrice(this.value)" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.02); color: var(--white); cursor: pointer; font-size: 0.9rem; outline: none;">
+              <option value="all">Any Price</option>
+              <option value="under-300">Under ₹300</option>
+              <option value="300-500">₹300 - ₹500</option>
+            </select>
+          </div>
+          
+        </aside>
 
-        <!-- Sort Select -->
-        <div class="filter-select-group" style="gap: 12px;">
-          <select id="sortSelect" onchange="filterSort(this.value)">
-            <option value="featured">Recommended</option>
-            <option value="price-low">Price: Low to High</option>
-            <option value="price-high">Price: High to Low</option>
-            <option value="rating">Customer Rating</option>
-          </select>
-
-          <select id="priceFilterSelect" onchange="filterPrice(this.value)">
-            <option value="all">Any Price</option>
-            <option value="under-300">Under ₹300</option>
-            <option value="300-500">₹300 - ₹500</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Loading Indicator -->
-      <div id="productsLoader" class="loader-wrapper" style="display:none">
-        <div class="spinner"></div>
-        <p>Loading premium products...</p>
-      </div>
-
-      <!-- Products Grid -->
-      <div class="products-grid" id="productsGrid">
-        <!-- Injected via search.js -->
+        <!-- Right: Catalog Products Grid -->
+        <main class="catalog-main">
+          <!-- Loading Indicator -->
+          <div id="productsLoader" class="loader-wrapper" style="display:none; text-align: center; padding: 40px 0;">
+            <div class="spinner" style="width: 40px; height: 40px; border: 3px solid rgba(245,197,24,0.1); border-top-color: var(--yellow); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 12px;"></div>
+            <p style="color: var(--white); opacity: 0.7; font-size: 0.9rem;">Loading premium products...</p>
+          </div>
+          
+          <div class="catalog-grid" id="productsGrid">
+            <!-- Injected via search.js -->
+          </div>
+        </main>
       </div>
 
     </div>
@@ -101,7 +125,7 @@
       <div class="container">
         <div class="footer-grid">
           <div class="footer-brand-col">
-            <a href="/" class="footer-logo">
+            <a href="../index.html" class="footer-logo">
               <span class="logo-icon">⚙</span>
               <span class="logo-text">LOHAR <span class="logo-accent">AUTO</span></span>
             </a>
@@ -110,9 +134,9 @@
           <div class="footer-links-col">
             <h4>Company</h4>
             <ul>
-              <li><a href="/#about">About Us</a></li>
-              <li><a href="/pages/products.html">Products</a></li>
-              <li><a href="/#dealer">Become a Dealer</a></li>
+              <li><a href="../index.html#about">About Us</a></li>
+              <li><a href="products.html">Products</a></li>
+              <li><a href="../index.html#dealer">Become a Dealer</a></li>
             </ul>
           </div>
           <div class="footer-links-col">
@@ -120,7 +144,7 @@
             <ul>
               <li><a href="https://www.flipkart.com" target="_blank">Flipkart</a></li>
               <li><a href="https://www.meesho.com" target="_blank">Meesho</a></li>
-              <li><a href="/#contact">Bulk Orders</a></li>
+              <li><a href="../index.html#contact">Bulk Orders</a></li>
             </ul>
           </div>
         </div>
