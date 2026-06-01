@@ -315,7 +315,20 @@
 
         // Load reviews and related products
         loadReviews(activeProduct._id);
-        renderRelatedProducts(activeProduct.relatedProducts || []);
+        
+        let related = activeProduct.relatedProducts || [];
+        if (related.length < 3) {
+          try {
+            const allRes = await ProductsAPI.list();
+            const allProds = allRes.products || [];
+            const existingIds = new Set(related.map(p => p._id));
+            const extraProds = allProds.filter(p => p._id !== activeProduct._id && !existingIds.has(p._id));
+            related = [...related, ...extraProds].slice(0, 4);
+          } catch (err) {
+            console.error('Failed to load related fallback products', err);
+          }
+        }
+        renderRelatedProducts(related);
 
       } catch (err) {
         toast.error('Failed to load product details');
@@ -430,22 +443,67 @@
         return;
       }
 
-      grid.innerHTML = products.map(p => `
-        <div class="product-card premium-border" data-id="${p._id}">
-          <a href="/pages/product-detail.html?slug=${p.slug}">
-            <img src="${p.images?.[0] || '/assets/images/hero_bottle.png'}" class="product-card-img" onerror="this.src='/assets/images/hero_bottle.png'">
-          </a>
-          <div class="product-card-info">
-            <span class="product-card-category">${p.category}</span>
-            <h3 class="product-card-title">
-              <a href="/pages/product-detail.html?slug=${p.slug}">${p.name}</a>
-            </h3>
-            <div class="price-box">
-              <span class="current-price">₹${p.price}</span>
+      grid.innerHTML = products.map(p => {
+        const discount = p.mrp > p.price ? Math.round(((p.mrp - p.price) / p.mrp) * 100) : 0;
+        
+        return `
+          <div class="d2c-card fade-in" data-id="${p._id}" onclick="if(!event.target.closest('.d2c-actions, .wishlist-toggle-btn')) window.location.href='/pages/product-detail.html?slug=${p.slug}'" style="cursor: pointer;">
+            <div class="d2c-card-media">
+              ${discount > 0 ? `<span class="d2c-badge-discount">-${discount}%</span>` : ''}
+              <button class="wishlist-toggle-btn" onclick="event.stopPropagation(); toggleWishlist('${p._id}', this)" data-id="${p._id}">
+                ♡
+              </button>
+              <a href="/pages/product-detail.html?slug=${p.slug}" class="d2c-img-wrap" onclick="event.stopPropagation();">
+                <img src="${p.images?.[0] || '/assets/images/hero_bottle.png'}" alt="${p.name}" class="d2c-img" onerror="this.src='/assets/images/hero_bottle.png'">
+              </a>
+            </div>
+            
+            <div class="d2c-card-content">
+              <div class="d2c-category-row">
+                <span class="d2c-category">${p.category || 'Auto Care'}</span>
+                <span class="d2c-stock-status ${p.stock > 0 ? 'in-stock' : 'out-of-stock'}">
+                  ${p.stock > 0 ? 'In Stock' : 'Out of Stock'}
+                </span>
+              </div>
+              
+              <h3 class="d2c-title">
+                <a href="/pages/product-detail.html?slug=${p.slug}" onclick="event.stopPropagation();">${p.name}</a>
+              </h3>
+              
+              <div class="d2c-rating-row">
+                <span class="d2c-stars">
+                  ${'★'.repeat(Math.round(p.rating?.avg || 5))}${'☆'.repeat(5 - Math.round(p.rating?.avg || 5))}
+                </span>
+                <span class="d2c-rating-val">${p.rating?.avg !== undefined ? p.rating.avg.toFixed(1) : '5.0'}</span>
+                <span class="d2c-rating-count">(${p.rating?.count !== undefined ? p.rating.count : 0})</span>
+              </div>
+              
+              <div class="d2c-price-row">
+                <div class="d2c-price-box">
+                  <span class="d2c-price">₹${p.price}</span>
+                  ${p.mrp > p.price ? `<span class="d2c-mrp">₹${p.mrp}</span>` : ''}
+                </div>
+              </div>
+              
+              <div class="d2c-actions">
+                <button 
+                  class="d2c-btn-cart" 
+                  data-add-cart="${p._id}" 
+                  data-original-text="Add to Cart"
+                  onclick="event.stopPropagation(); addToCart('${p._id}', 1, ${JSON.stringify(p).replace(/"/g, '&quot;')})"
+                  ${p.stock === 0 ? 'disabled' : ''}
+                >
+                  ${p.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
+
+      if (typeof updateWishlistIcons === 'function') {
+        updateWishlistIcons();
+      }
     }
 
     document.addEventListener('DOMContentLoaded', () => {

@@ -54,7 +54,7 @@ const renderProducts = (products) => {
     const discount = p.mrp > p.price ? Math.round(((p.mrp - p.price) / p.mrp) * 100) : 0;
     
     return `
-      <div class="d2c-card fade-in" data-id="${p._id}">
+      <div class="d2c-card fade-in" data-id="${p._id}" onclick="if(!event.target.closest('.d2c-actions, .wishlist-toggle-btn')) window.location.href='/pages/product-detail.html?slug=${p.slug}'" style="cursor: pointer;">
         <div class="d2c-card-media">
           ${discount > 0 ? `<span class="d2c-badge-discount">-${discount}%</span>` : ''}
           <button class="wishlist-toggle-btn" onclick="toggleWishlist('${p._id}', this)" data-id="${p._id}">

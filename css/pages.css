@@ -246,7 +246,7 @@ body.bg-dark {
 }
 .catalog-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
   gap: 24px;
 }
 @media (min-width: 1400px) {
@@ -902,7 +902,7 @@ body.bg-dark {
 }
 .related-products-section .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
   gap: 24px;
   margin-top: 24px;
 }
