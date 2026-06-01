@@ -208,8 +208,9 @@ function initScrollReveal() {
   const frame = reveal.querySelector('.engine-cleaning-frame');
   const halo = reveal.querySelector('.engine-halo');
   let rafId = 0;
-  const target = { x: 50, y: 50, radius: 140 };
-  const current = { x: 50, y: 50, radius: 140 };
+  const target = { x: 50, y: 50, radius: 0 };
+  const current = { x: 50, y: 50, radius: 0 };
+  let isHovered = false;
 
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
   const getRadius = () =>
@@ -230,6 +231,7 @@ function initScrollReveal() {
   };
 
   const setReveal = (clientX, clientY) => {
+    isHovered = true;
     const rect = reveal.getBoundingClientRect();
     const x = clamp(((clientX - rect.left) / rect.width) * 100, 0, 100);
     const y = clamp(((clientY - rect.top) / rect.height) * 100, 0, 100);
@@ -241,6 +243,7 @@ function initScrollReveal() {
   };
 
   const hideReveal = () => {
+    isHovered = false;
     target.radius = 0;
   };
 
@@ -255,7 +258,9 @@ function initScrollReveal() {
   };
 
   const resizeHandler = () => {
-    target.radius = getRadius();
+    if (isHovered) {
+      target.radius = getRadius();
+    }
   };
 
   reveal.addEventListener('mousemove', pointerMove);
@@ -460,86 +465,7 @@ document.querySelectorAll('.product-card').forEach((card) => {
   }, 1500);
 })();
 
-// ---- INTERACTIVE BEFORE/AFTER ENGINE REVEAL ----
-(function initEngineReveal() {
-  const container = document.getElementById('engineReveal');
-  const frame = container ? container.querySelector('.engine-cleaning-frame') : null;
-  const halo = container ? container.querySelector('.engine-halo') : null;
-  if (!container || !frame || !halo) return;
 
-  let rect = frame.getBoundingClientRect();
-  let targetX = 50; // percentage
-  let targetY = 50; // percentage
-  let currentX = 50;
-  let currentY = 50;
-  const ease = 0.15; // lerp smooth animation speed
-  let isHovered = false;
-
-  const updateCoords = (clientX, clientY) => {
-    rect = frame.getBoundingClientRect();
-    const x = ((clientX - rect.left) / rect.width) * 100;
-    const y = ((clientY - rect.top) / rect.height) * 100;
-    targetX = Math.max(0, Math.min(100, x));
-    targetY = Math.max(0, Math.min(100, y));
-  };
-
-  frame.addEventListener('mousemove', (e) => {
-    isHovered = true;
-    updateCoords(e.clientX, e.clientY);
-  });
-
-  frame.addEventListener('mouseenter', () => {
-    isHovered = true;
-    halo.style.opacity = '1';
-  });
-
-  frame.addEventListener('mouseleave', () => {
-    isHovered = false;
-    halo.style.opacity = '0';
-  });
-
-  // Touch Drag Support (Mobile)
-  frame.addEventListener('touchstart', (e) => {
-    isHovered = true;
-    halo.style.opacity = '1';
-    if (e.touches.length > 0) {
-      updateCoords(e.touches[0].clientX, e.touches[0].clientY);
-    }
-  }, { passive: true });
-
-  frame.addEventListener('touchmove', (e) => {
-    if (e.touches.length > 0) {
-      updateCoords(e.touches[0].clientX, e.touches[0].clientY);
-    }
-  }, { passive: true });
-
-  frame.addEventListener('touchend', () => {
-    isHovered = false;
-    halo.style.opacity = '0';
-  });
-
-  // Smooth lerp animation loop (60 FPS)
-  const animate = () => {
-    currentX += (targetX - currentX) * ease;
-    currentY += (targetY - currentY) * ease;
-
-    container.style.setProperty('--reveal-x', `${currentX}%`);
-    container.style.setProperty('--reveal-y', `${currentY}%`);
-
-    // Responsive circle radius based on current frame width
-    const width = rect.width || frame.offsetWidth || 400;
-    const revealRadius = Math.max(60, Math.min(90, width * 0.18));
-    container.style.setProperty('--reveal-radius', `${revealRadius}px`);
-
-    requestAnimationFrame(animate);
-  };
-
-  animate();
-
-  window.addEventListener('resize', () => {
-    rect = frame.getBoundingClientRect();
-  });
-})();
 
 // ---- HOME PRODUCTS CAROUSEL SLIDER ----
 (function initProductsCarousel() {
