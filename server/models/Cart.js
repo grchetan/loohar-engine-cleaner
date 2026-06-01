@@ -1,7 +1,11 @@
 const mongoose = require('mongoose');
 
 const cartItemSchema = new mongoose.Schema({
-  product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
+  product: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Product',
+    required: true,
+  },
   qty: { type: Number, required: true, min: 1, max: 20, default: 1 },
   price: { type: Number },
 });
@@ -12,7 +16,7 @@ const cartSchema = new mongoose.Schema(
     sessionId: { type: String, sparse: true },
     items: [cartItemSchema],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 cartSchema.index({ user: 1 });

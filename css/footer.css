@@ -30,7 +30,8 @@
   width: auto;
 }
 
-.footer-brand-desc, .footer-desc {
+.footer-brand-desc,
+.footer-desc {
   color: #625e55 !important; /* var(--white-3) medium gray */
   font-size: 0.9rem;
   line-height: 1.8;
@@ -58,9 +59,9 @@
 }
 
 .social-link:hover {
-  background: #D4AF37 !important; /* var(--yellow) */
+  background: #d4af37 !important; /* var(--yellow) */
   color: #fcfbf9 !important;
-  border-color: #D4AF37 !important;
+  border-color: #d4af37 !important;
   transform: translateY(-3px);
 }
 
@@ -68,7 +69,7 @@
   font-family: 'Outfit', sans-serif;
   font-size: 0.9rem;
   font-weight: 700;
-  color: #D4AF37 !important; /* var(--yellow) */
+  color: #d4af37 !important; /* var(--yellow) */
   text-transform: uppercase;
   letter-spacing: 1px;
   margin-bottom: 20px;
@@ -91,7 +92,7 @@
 }
 
 .footer-links-col a:hover {
-  color: #D4AF37 !important;
+  color: #d4af37 !important;
   padding-left: 4px;
 }
 

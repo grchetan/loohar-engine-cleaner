@@ -6,33 +6,45 @@ const protect = async (req, res, next) => {
   let token;
 
   // Check Authorization header first, then cookie
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer ')
+  ) {
     token = req.headers.authorization.split(' ')[1];
   } else if (req.cookies && req.cookies.token) {
     token = req.cookies.token;
   }
 
   if (!token) {
-    return res.status(401).json({ success: false, message: 'Not authorized. Please log in.' });
+    return res
+      .status(401)
+      .json({ success: false, message: 'Not authorized. Please log in.' });
   }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.id).select('-password');
     if (!user || !user.isActive) {
-      return res.status(401).json({ success: false, message: 'User not found or deactivated.' });
+      return res
+        .status(401)
+        .json({ success: false, message: 'User not found or deactivated.' });
     }
     req.user = user;
     next();
   } catch (error) {
-    return res.status(401).json({ success: false, message: 'Invalid or expired token.' });
+    return res
+      .status(401)
+      .json({ success: false, message: 'Invalid or expired token.' });
   }
 };
 
 // Optional auth - attach user if token present, don't block if not
 const optionalAuth = async (req, res, next) => {
   let token;
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer ')
+  ) {
     token = req.headers.authorization.split(' ')[1];
   } else if (req.cookies && req.cookies.token) {
     token = req.cookies.token;

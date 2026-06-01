@@ -5,8 +5,11 @@ let razorpayInstance;
 const getRazorpay = () => {
   if (razorpayInstance) return razorpayInstance;
 
-  if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET ||
-      process.env.RAZORPAY_KEY_ID.includes('XXXX')) {
+  if (
+    !process.env.RAZORPAY_KEY_ID ||
+    !process.env.RAZORPAY_KEY_SECRET ||
+    process.env.RAZORPAY_KEY_ID.includes('XXXX')
+  ) {
     console.warn('⚠️  Razorpay not configured - COD only mode');
     return null;
   }

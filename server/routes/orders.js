@@ -12,7 +12,11 @@ router.get('/', protect, async (req, res) => {
     const { page = 1, limit = 10 } = req.query;
     const skip = (page - 1) * limit;
     const [orders, total] = await Promise.all([
-      Order.find({ user: req.user._id }).sort({ createdAt: -1 }).skip(skip).limit(Number(limit)).populate('items.product', 'name images slug'),
+      Order.find({ user: req.user._id })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(Number(limit))
+        .populate('items.product', 'name images slug'),
       Order.countDocuments({ user: req.user._id }),
     ]);
     res.json({ success: true, orders, total, pages: Math.ceil(total / limit) });
@@ -24,8 +28,14 @@ router.get('/', protect, async (req, res) => {
 // GET /api/orders/:orderId — Single order
 router.get('/:orderId', protect, async (req, res) => {
   try {
-    const order = await Order.findOne({ orderId: req.params.orderId, user: req.user._id }).populate('items.product', 'name images slug price');
-    if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
+    const order = await Order.findOne({
+      orderId: req.params.orderId,
+      user: req.user._id,
+    }).populate('items.product', 'name images slug price');
+    if (!order)
+      return res
+        .status(404)
+        .json({ success: false, message: 'Order not found' });
     res.json({ success: true, order });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -35,10 +45,25 @@ router.get('/:orderId', protect, async (req, res) => {
 // POST /api/orders/:orderId/cancel — Cancel order
 router.post('/:orderId/cancel', protect, async (req, res) => {
   try {
-    const order = await Order.findOne({ orderId: req.params.orderId, user: req.user._id });
-    if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
-    if (['Shipped', 'Out For Delivery', 'Delivered', 'Cancelled'].includes(order.status)) {
-      return res.status(400).json({ success: false, message: `Cannot cancel order in ${order.status} status` });
+    const order = await Order.findOne({
+      orderId: req.params.orderId,
+      user: req.user._id,
+    });
+    if (!order)
+      return res
+        .status(404)
+        .json({ success: false, message: 'Order not found' });
+    if (
+      ['Shipped', 'Out For Delivery', 'Delivered', 'Cancelled'].includes(
+        order.status,
+      )
+    ) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: `Cannot cancel order in ${order.status} status`,
+        });
     }
     order.status = 'Cancelled';
     order.cancelReason = req.body.reason || 'Cancelled by customer';
@@ -47,7 +72,9 @@ router.post('/:orderId/cancel', protect, async (req, res) => {
 
     // Restore stock
     for (const item of order.items) {
-      await Product.findByIdAndUpdate(item.product, { $inc: { stock: item.qty } });
+      await Product.findByIdAndUpdate(item.product, {
+        $inc: { stock: item.qty },
+      });
     }
     await order.save();
     res.json({ success: true, order });
@@ -59,11 +86,22 @@ router.post('/:orderId/cancel', protect, async (req, res) => {
 // GET /api/orders/:orderId/invoice — Download PDF invoice
 router.get('/:orderId/invoice', protect, async (req, res) => {
   try {
-    const order = await Order.findOne({ orderId: req.params.orderId, user: req.user._id }).populate('items.product', 'name price').populate('user', 'name email');
-    if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
+    const order = await Order.findOne({
+      orderId: req.params.orderId,
+      user: req.user._id,
+    })
+      .populate('items.product', 'name price')
+      .populate('user', 'name email');
+    if (!order)
+      return res
+        .status(404)
+        .json({ success: false, message: 'Order not found' });
 
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename=invoice-${order.orderId}.pdf`);
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename=invoice-${order.orderId}.pdf`,
+    );
     generateInvoicePDF(order, res);
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -80,7 +118,11 @@ router.get('/admin/all', protect, adminOnly, async (req, res) => {
     if (search) query.orderId = { $regex: search, $options: 'i' };
     const skip = (page - 1) * limit;
     const [orders, total] = await Promise.all([
-      Order.find(query).sort({ createdAt: -1 }).skip(skip).limit(Number(limit)).populate('user', 'name email phone'),
+      Order.find(query)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(Number(limit))
+        .populate('user', 'name email phone'),
       Order.countDocuments(query),
     ]);
     res.json({ success: true, orders, total, pages: Math.ceil(total / limit) });
@@ -94,10 +136,17 @@ router.put('/:orderId/status', protect, adminOnly, async (req, res) => {
   try {
     const { status, note } = req.body;
     const order = await Order.findOne({ orderId: req.params.orderId });
-    if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
+    if (!order)
+      return res
+        .status(404)
+        .json({ success: false, message: 'Order not found' });
 
     order.status = status;
-    order.tracking.push({ status, note: note || `Status updated to ${status}`, updatedBy: req.user._id });
+    order.tracking.push({
+      status,
+      note: note || `Status updated to ${status}`,
+      updatedBy: req.user._id,
+    });
     if (status === 'Delivered') order.deliveredAt = new Date();
 
     await order.save();
@@ -106,7 +155,11 @@ router.put('/:orderId/status', protect, adminOnly, async (req, res) => {
     try {
       const emailService = require('../services/email');
       const populatedOrder = await order.populate('user', 'name email');
-      await emailService.sendOrderStatusUpdate(populatedOrder.user.email, populatedOrder.user.name, order);
+      await emailService.sendOrderStatusUpdate(
+        populatedOrder.user.email,
+        populatedOrder.user.name,
+        order,
+      );
     } catch (_) {}
 
     res.json({ success: true, order });

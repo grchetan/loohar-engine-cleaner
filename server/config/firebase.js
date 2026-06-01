@@ -22,7 +22,9 @@ const initFirebase = () => {
     };
 
     if (!serviceAccount.project_id || !serviceAccount.private_key) {
-      console.warn('⚠️  Firebase Admin SDK not configured - Auth will use JWT only');
+      console.warn(
+        '⚠️  Firebase Admin SDK not configured - Auth will use JWT only',
+      );
       return;
     }
 

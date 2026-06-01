@@ -15,7 +15,12 @@ const addressSchema = new mongoose.Schema({
 
 const userSchema = new mongoose.Schema(
   {
-    name: { type: String, required: [true, 'Name is required'], trim: true, maxlength: 60 },
+    name: {
+      type: String,
+      required: [true, 'Name is required'],
+      trim: true,
+      maxlength: 60,
+    },
     email: {
       type: String,
       required: [true, 'Email is required'],
@@ -37,7 +42,7 @@ const userSchema = new mongoose.Schema(
     resetPasswordToken: String,
     resetPasswordExpire: Date,
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 // Hash password before saving

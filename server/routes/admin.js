@@ -19,16 +19,33 @@ router.get('/dashboard', async (req, res) => {
     const startOfToday = new Date(now.setHours(0, 0, 0, 0));
 
     const [
-      totalOrders, todayOrders, monthOrders,
-      totalRevenue, monthRevenue,
-      totalUsers, totalProducts,
-      pendingOrders, pendingReviews, newInquiries
+      totalOrders,
+      todayOrders,
+      monthOrders,
+      totalRevenue,
+      monthRevenue,
+      totalUsers,
+      totalProducts,
+      pendingOrders,
+      pendingReviews,
+      newInquiries,
     ] = await Promise.all([
       Order.countDocuments(),
       Order.countDocuments({ createdAt: { $gte: startOfToday } }),
       Order.countDocuments({ createdAt: { $gte: startOfMonth } }),
-      Order.aggregate([{ $match: { 'payment.status': 'paid' } }, { $group: { _id: null, total: { $sum: '$total' } } }]),
-      Order.aggregate([{ $match: { createdAt: { $gte: startOfMonth }, 'payment.status': 'paid' } }, { $group: { _id: null, total: { $sum: '$total' } } }]),
+      Order.aggregate([
+        { $match: { 'payment.status': 'paid' } },
+        { $group: { _id: null, total: { $sum: '$total' } } },
+      ]),
+      Order.aggregate([
+        {
+          $match: {
+            createdAt: { $gte: startOfMonth },
+            'payment.status': 'paid',
+          },
+        },
+        { $group: { _id: null, total: { $sum: '$total' } } },
+      ]),
       User.countDocuments({ role: 'customer' }),
       Product.countDocuments({ isActive: true }),
       Order.countDocuments({ status: { $in: ['Placed', 'Confirmed'] } }),
@@ -37,19 +54,30 @@ router.get('/dashboard', async (req, res) => {
     ]);
 
     // Recent orders
-    const recentOrders = await Order.find().sort({ createdAt: -1 }).limit(5).populate('user', 'name email');
+    const recentOrders = await Order.find()
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .populate('user', 'name email');
 
     // Low stock products
-    const lowStock = await Product.find({ isActive: true, stock: { $lte: 10 } }).select('name stock');
+    const lowStock = await Product.find({
+      isActive: true,
+      stock: { $lte: 10 },
+    }).select('name stock');
 
     res.json({
       success: true,
       stats: {
-        totalOrders, todayOrders, monthOrders,
+        totalOrders,
+        todayOrders,
+        monthOrders,
         totalRevenue: totalRevenue[0]?.total || 0,
         monthRevenue: monthRevenue[0]?.total || 0,
-        totalUsers, totalProducts, pendingOrders,
-        pendingReviews, newInquiries,
+        totalUsers,
+        totalProducts,
+        pendingOrders,
+        pendingReviews,
+        newInquiries,
       },
       recentOrders,
       lowStock,
@@ -64,14 +92,19 @@ router.get('/customers', async (req, res) => {
   try {
     const { page = 1, limit = 20, search } = req.query;
     const query = { role: 'customer' };
-    if (search) query.$or = [
-      { name: { $regex: search, $options: 'i' } },
-      { email: { $regex: search, $options: 'i' } },
-      { phone: { $regex: search, $options: 'i' } },
-    ];
+    if (search)
+      query.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
+        { phone: { $regex: search, $options: 'i' } },
+      ];
     const skip = (page - 1) * limit;
     const [users, total] = await Promise.all([
-      User.find(query).sort({ createdAt: -1 }).skip(skip).limit(Number(limit)).select('-password'),
+      User.find(query)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(Number(limit))
+        .select('-password'),
       User.countDocuments(query),
     ]);
     res.json({ success: true, users, total, pages: Math.ceil(total / limit) });
@@ -83,7 +116,11 @@ router.get('/customers', async (req, res) => {
 // PATCH /api/admin/customers/:id/status — Toggle customer active status
 router.patch('/customers/:id/status', async (req, res) => {
   try {
-    const user = await User.findByIdAndUpdate(req.params.id, { isActive: req.body.isActive }, { new: true }).select('-password');
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { isActive: req.body.isActive },
+      { new: true },
+    ).select('-password');
     res.json({ success: true, user });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });

@@ -22,7 +22,9 @@ const sendEmail = async ({ to, subject, html }) => {
   if (!t) return;
   await t.sendMail({
     from: `"Lohar Auto Garage" <${process.env.EMAIL_USER}>`,
-    to, subject, html,
+    to,
+    subject,
+    html,
   });
 };
 
@@ -85,9 +87,12 @@ const sendWelcomeEmail = async (email, name) => {
 
 // Order Confirmation Email
 const sendOrderConfirmation = async (email, name, order) => {
-  const itemsHtml = order.items.map(item =>
-    `<tr><td>${item.name}</td><td>${item.qty}</td><td>₹${item.price}</td><td>₹${item.price * item.qty}</td></tr>`
-  ).join('');
+  const itemsHtml = order.items
+    .map(
+      (item) =>
+        `<tr><td>${item.name}</td><td>${item.qty}</td><td>₹${item.price}</td><td>₹${item.price * item.qty}</td></tr>`,
+    )
+    .join('');
 
   await sendEmail({
     to: email,
@@ -117,8 +122,12 @@ const sendOrderConfirmation = async (email, name, order) => {
 // Order Status Update Email
 const sendOrderStatusUpdate = async (email, name, order) => {
   const statusColors = {
-    Confirmed: '#d4edda', Packed: '#cce5ff', Shipped: '#fff3cd',
-    'Out For Delivery': '#ffd9b3', Delivered: '#d4edda', Cancelled: '#f8d7da',
+    Confirmed: '#d4edda',
+    Packed: '#cce5ff',
+    Shipped: '#fff3cd',
+    'Out For Delivery': '#ffd9b3',
+    Delivered: '#d4edda',
+    Cancelled: '#f8d7da',
   };
   const color = statusColors[order.status] || '#f0f0f0';
 
@@ -173,4 +182,10 @@ const sendDealerInquiryAlert = async (inquiry) => {
   });
 };
 
-module.exports = { sendWelcomeEmail, sendOrderConfirmation, sendOrderStatusUpdate, sendPasswordReset, sendDealerInquiryAlert };
+module.exports = {
+  sendWelcomeEmail,
+  sendOrderConfirmation,
+  sendOrderStatusUpdate,
+  sendPasswordReset,
+  sendDealerInquiryAlert,
+};

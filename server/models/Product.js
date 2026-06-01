@@ -2,12 +2,21 @@ const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema(
   {
-    name: { type: String, required: [true, 'Product name is required'], trim: true },
+    name: {
+      type: String,
+      required: [true, 'Product name is required'],
+      trim: true,
+    },
     slug: { type: String, unique: true, lowercase: true },
     category: {
       type: String,
       required: true,
-      enum: ['Engine Care', 'Exterior Care', 'Interior Care', 'Garage Maintenance'],
+      enum: [
+        'Engine Care',
+        'Exterior Care',
+        'Interior Care',
+        'Garage Maintenance',
+      ],
     },
     description: { type: String, required: true },
     features: [{ type: String }],
@@ -29,7 +38,7 @@ const productSchema = new mongoose.Schema(
     },
     relatedProducts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 // Auto-generate slug from name

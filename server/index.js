@@ -16,19 +16,31 @@ const app = express();
 // ======= Connect Database =======
 connectDB().then(() => {
   const { generateSitemap } = require('./services/sitemap');
-  generateSitemap(process.env.FRONTEND_URL || 'http://localhost:5000').catch(() => {});
+  generateSitemap(process.env.FRONTEND_URL || 'http://localhost:5000').catch(
+    () => {},
+  );
 });
 initFirebase();
 
 // ======= Security Middleware =======
-app.use(helmet({
-  contentSecurityPolicy: false, // Allow inline scripts for the frontend
-  crossOriginEmbedderPolicy: false,
-}));
+app.use(
+  helmet({
+    contentSecurityPolicy: false, // Allow inline scripts for the frontend
+    crossOriginEmbedderPolicy: false,
+  }),
+);
 
 // Rate limiting
-const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 200, message: 'Too many requests, try again later.' });
-const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 15, message: 'Too many auth attempts.' });
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 200,
+  message: 'Too many requests, try again later.',
+});
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 15,
+  message: 'Too many auth attempts.',
+});
 app.use('/api/', limiter);
 app.use('/api/auth/', authLimiter);
 
@@ -39,13 +51,15 @@ const allowedOrigins = [
   'http://127.0.0.1:5000',
   'http://127.0.0.1:5500', // Live Server
 ];
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) callback(null, true);
-    else callback(new Error('Not allowed by CORS'));
-  },
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) callback(null, true);
+      else callback(new Error('Not allowed by CORS'));
+    },
+    credentials: true,
+  }),
+);
 
 // HPP — Prevent HTTP parameter pollution
 app.use(hpp());
@@ -75,7 +89,11 @@ app.use('/api/admin', require('./routes/admin'));
 
 // ======= Health Check =======
 app.get('/api/health', (req, res) => {
-  res.json({ success: true, message: '⚙ Lohar Auto Garage API is running', timestamp: new Date().toISOString() });
+  res.json({
+    success: true,
+    message: '⚙ Lohar Auto Garage API is running',
+    timestamp: new Date().toISOString(),
+  });
 });
 
 // ======= SPA Fallback (serve frontend for non-API routes) =======
@@ -95,11 +113,16 @@ app.use((err, req, res, next) => {
   }
   if (err.code === 11000) {
     const field = Object.keys(err.keyValue)[0];
-    return res.status(400).json({ success: false, message: `${field} already exists` });
+    return res
+      .status(400)
+      .json({ success: false, message: `${field} already exists` });
   }
   res.status(err.statusCode || 500).json({
     success: false,
-    message: process.env.NODE_ENV === 'production' ? 'Internal server error' : err.message,
+    message:
+      process.env.NODE_ENV === 'production'
+        ? 'Internal server error'
+        : err.message,
   });
 });
 

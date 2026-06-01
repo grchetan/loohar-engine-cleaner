@@ -3,7 +3,10 @@ const cloudinary = require('cloudinary').v2;
 const path = require('path');
 
 // Configure Cloudinary
-if (process.env.CLOUDINARY_CLOUD_NAME && !process.env.CLOUDINARY_CLOUD_NAME.includes('your-')) {
+if (
+  process.env.CLOUDINARY_CLOUD_NAME &&
+  !process.env.CLOUDINARY_CLOUD_NAME.includes('your-')
+) {
   cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
@@ -38,7 +41,7 @@ const uploadToCloudinary = (buffer, folder = 'lohar-auto') => {
       (error, result) => {
         if (error) reject(error);
         else resolve(result.secure_url);
-      }
+      },
     );
     stream.end(buffer);
   });

@@ -14,14 +14,14 @@ const replacements = [
   { from: 'href="/pages/checkout.html"', to: 'href="checkout.html"' },
   { from: 'href="/pages/profile.html"', to: 'href="profile.html"' },
   { from: 'href="/pages/orders.html"', to: 'href="orders.html"' },
-  { from: 'href="/pages/wishlist.html"', to: 'href="wishlist.html"' }
+  { from: 'href="/pages/wishlist.html"', to: 'href="wishlist.html"' },
 ];
 
 const fixFile = (filePath) => {
   let content = fs.readFileSync(filePath, 'utf8');
   let original = content;
 
-  replacements.forEach(r => {
+  replacements.forEach((r) => {
     // Replace both double quotes and single quotes occurrences
     const regex1 = new RegExp(r.from, 'g');
     content = content.replace(regex1, r.to);
@@ -40,7 +40,7 @@ const fixFile = (filePath) => {
 
 const walk = (dir) => {
   const files = fs.readdirSync(dir);
-  files.forEach(file => {
+  files.forEach((file) => {
     const filePath = path.join(dir, file);
     const stat = fs.statSync(filePath);
     if (stat.isDirectory()) {

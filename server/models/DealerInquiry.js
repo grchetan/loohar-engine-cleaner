@@ -10,7 +10,14 @@ const dealerInquirySchema = new mongoose.Schema(
     state: { type: String, trim: true },
     businessType: {
       type: String,
-      enum: ['garage', 'workshop', 'autoparts', 'distributor', 'servicecenter', 'other'],
+      enum: [
+        'garage',
+        'workshop',
+        'autoparts',
+        'distributor',
+        'servicecenter',
+        'other',
+      ],
       default: 'other',
     },
     inquiryType: {
@@ -26,7 +33,7 @@ const dealerInquirySchema = new mongoose.Schema(
     },
     adminNotes: { type: String },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 dealerInquirySchema.index({ status: 1, createdAt: -1 });

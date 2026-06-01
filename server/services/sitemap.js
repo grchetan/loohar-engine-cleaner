@@ -4,8 +4,10 @@ const Product = require('../models/Product');
 
 const generateSitemap = async (domain = 'https://loharautogarage.com') => {
   try {
-    const products = await Product.find({ isActive: true }).select('slug updatedAt');
-    
+    const products = await Product.find({ isActive: true }).select(
+      'slug updatedAt',
+    );
+
     let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- Static Pages -->
@@ -28,7 +30,9 @@ const generateSitemap = async (domain = 'https://loharautogarage.com') => {
 
     // Dynamic Product Pages
     for (const p of products) {
-      const lastMod = p.updatedAt ? new Date(p.updatedAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+      const lastMod = p.updatedAt
+        ? new Date(p.updatedAt).toISOString().split('T')[0]
+        : new Date().toISOString().split('T')[0];
       xml += `  <url>
     <loc>${domain}/pages/product-detail.html?slug=${p.slug}</loc>
     <lastmod>${lastMod}</lastmod>

@@ -22,16 +22,32 @@ const GST_RATE = 0.18;
 // POST /api/payment/create-order — Create Razorpay order
 router.post('/create-order', protect, async (req, res) => {
   try {
-    const { items, couponCode, addressId, gstNumber, companyName, notes } = req.body;
+    const { items, couponCode, addressId, gstNumber, companyName, notes } =
+      req.body;
 
     // Validate items + calculate totals
     let subtotal = 0;
     const validatedItems = [];
     for (const item of items) {
       const product = await Product.findById(item.productId);
-      if (!product || !product.isActive) return res.status(400).json({ success: false, message: `${item.name} is unavailable` });
-      if (product.stock < item.qty) return res.status(400).json({ success: false, message: `Insufficient stock for ${product.name}` });
-      validatedItems.push({ product: product._id, name: product.name, image: product.images[0] || '', price: product.price, qty: item.qty });
+      if (!product || !product.isActive)
+        return res
+          .status(400)
+          .json({ success: false, message: `${item.name} is unavailable` });
+      if (product.stock < item.qty)
+        return res
+          .status(400)
+          .json({
+            success: false,
+            message: `Insufficient stock for ${product.name}`,
+          });
+      validatedItems.push({
+        product: product._id,
+        name: product.name,
+        image: product.images[0] || '',
+        price: product.price,
+        qty: item.qty,
+      });
       subtotal += product.price * item.qty;
     }
 
@@ -61,12 +77,31 @@ router.post('/create-order', protect, async (req, res) => {
     } else if (req.body.shippingAddress) {
       shippingAddress = req.body.shippingAddress;
     }
-    if (!shippingAddress) return res.status(400).json({ success: false, message: 'Shipping address required' });
+    if (!shippingAddress)
+      return res
+        .status(400)
+        .json({ success: false, message: 'Shipping address required' });
 
     const razorpay = getRazorpay();
     if (!razorpay) {
       // COD only — create order directly
-      return res.json({ success: true, codOnly: true, orderData: { items: validatedItems, shippingAddress, gstNumber, companyName, subtotal, shippingCharge, gstAmount, coupon: couponData, couponDiscount, total, notes } });
+      return res.json({
+        success: true,
+        codOnly: true,
+        orderData: {
+          items: validatedItems,
+          shippingAddress,
+          gstNumber,
+          companyName,
+          subtotal,
+          shippingCharge,
+          gstAmount,
+          coupon: couponData,
+          couponDiscount,
+          total,
+          notes,
+        },
+      });
     }
 
     const razorpayOrder = await razorpay.orders.create({
@@ -82,7 +117,19 @@ router.post('/create-order', protect, async (req, res) => {
       amount: razorpayOrder.amount,
       currency: razorpayOrder.currency,
       key: process.env.RAZORPAY_KEY_ID,
-      orderData: { items: validatedItems, shippingAddress, gstNumber, companyName, subtotal, shippingCharge, gstAmount, coupon: couponData, couponDiscount, total, notes },
+      orderData: {
+        items: validatedItems,
+        shippingAddress,
+        gstNumber,
+        companyName,
+        subtotal,
+        shippingCharge,
+        gstAmount,
+        coupon: couponData,
+        couponDiscount,
+        total,
+        notes,
+      },
     });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -92,7 +139,8 @@ router.post('/create-order', protect, async (req, res) => {
 // POST /api/payment/verify — Verify Razorpay payment + create order
 router.post('/verify', protect, async (req, res) => {
   try {
-    const { razorpayOrderId, razorpayPaymentId, razorpaySignature, orderData } = req.body;
+    const { razorpayOrderId, razorpayPaymentId, razorpaySignature, orderData } =
+      req.body;
 
     // Verify signature
     const expectedSignature = crypto
@@ -101,7 +149,9 @@ router.post('/verify', protect, async (req, res) => {
       .digest('hex');
 
     if (expectedSignature !== razorpaySignature) {
-      return res.status(400).json({ success: false, message: 'Payment verification failed' });
+      return res
+        .status(400)
+        .json({ success: false, message: 'Payment verification failed' });
     }
 
     const order = await createOrder(req.user._id, orderData, {
@@ -141,14 +191,16 @@ async function createOrder(userId, orderData, payment) {
 
   // Deduct stock
   for (const item of orderData.items) {
-    await Product.findByIdAndUpdate(item.product, { $inc: { stock: -item.qty } });
+    await Product.findByIdAndUpdate(item.product, {
+      $inc: { stock: -item.qty },
+    });
   }
 
   // Mark coupon used
   if (orderData.coupon?.code) {
     await Coupon.findOneAndUpdate(
       { code: orderData.coupon.code },
-      { $inc: { usedCount: 1 }, $push: { usedBy: userId } }
+      { $inc: { usedCount: 1 }, $push: { usedBy: userId } },
     );
   }
 

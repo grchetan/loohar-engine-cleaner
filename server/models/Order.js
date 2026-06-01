@@ -1,7 +1,11 @@
 const mongoose = require('mongoose');
 
 const orderItemSchema = new mongoose.Schema({
-  product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
+  product: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Product',
+    required: true,
+  },
   name: { type: String, required: true },
   image: { type: String },
   price: { type: Number, required: true },
@@ -49,11 +53,19 @@ const orderSchema = new mongoose.Schema(
       default: 'Placed',
     },
     payment: {
-      method: { type: String, enum: ['razorpay', 'cod', 'upi'], default: 'cod' },
+      method: {
+        type: String,
+        enum: ['razorpay', 'cod', 'upi'],
+        default: 'cod',
+      },
       razorpayOrderId: String,
       razorpayPaymentId: String,
       razorpaySignature: String,
-      status: { type: String, enum: ['pending', 'paid', 'failed', 'refunded'], default: 'pending' },
+      status: {
+        type: String,
+        enum: ['pending', 'paid', 'failed', 'refunded'],
+        default: 'pending',
+      },
       paidAt: Date,
     },
     coupon: {
@@ -72,7 +84,7 @@ const orderSchema = new mongoose.Schema(
     deliveredAt: { type: Date },
     notes: { type: String },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 orderSchema.index({ user: 1, createdAt: -1 });

@@ -313,7 +313,9 @@ ul {
 }
 .engine-after {
   z-index: 2;
-  clip-path: circle(var(--reveal-radius, 0px) at var(--reveal-x, 50%) var(--reveal-y, 50%));
+  clip-path: circle(
+    var(--reveal-radius, 0px) at var(--reveal-x, 50%) var(--reveal-y, 50%)
+  );
   will-change: clip-path;
 }
 .engine-halo {
@@ -322,8 +324,15 @@ ul {
   height: calc(var(--reveal-radius, 0px) * 2);
   border-radius: 50%;
   border: 2px solid rgba(245, 197, 24, 0.95);
-  background: radial-gradient(circle, rgba(245, 197, 24, 0.18) 0%, rgba(245, 197, 24, 0.02) 70%, transparent 100%);
-  box-shadow: 0 0 18px rgba(245, 197, 24, 0.45), inset 0 0 12px rgba(245, 197, 24, 0.3);
+  background: radial-gradient(
+    circle,
+    rgba(245, 197, 24, 0.18) 0%,
+    rgba(245, 197, 24, 0.02) 70%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 18px rgba(245, 197, 24, 0.45),
+    inset 0 0 12px rgba(245, 197, 24, 0.3);
   pointer-events: none;
   z-index: 3;
   transform: translate(-50%, -50%);
@@ -337,8 +346,13 @@ ul {
   opacity: 1;
 }
 @keyframes engineFloat {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-10px) rotate(0.5deg); }
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(0.5deg);
+  }
 }
 
 /* ---- BUTTONS ---- */

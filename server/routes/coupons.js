@@ -8,16 +8,28 @@ const { adminOnly } = require('../middleware/adminAuth');
 router.post('/validate', protect, async (req, res) => {
   try {
     const { code, orderAmount } = req.body;
-    if (!code) return res.status(400).json({ success: false, message: 'Coupon code required' });
+    if (!code)
+      return res
+        .status(400)
+        .json({ success: false, message: 'Coupon code required' });
 
     const coupon = await Coupon.findOne({ code: code.toUpperCase() });
-    if (!coupon) return res.status(404).json({ success: false, message: 'Invalid coupon code' });
+    if (!coupon)
+      return res
+        .status(404)
+        .json({ success: false, message: 'Invalid coupon code' });
 
     const validity = coupon.isValid(orderAmount || 0, req.user._id);
-    if (!validity.valid) return res.status(400).json({ success: false, message: validity.message });
+    if (!validity.valid)
+      return res
+        .status(400)
+        .json({ success: false, message: validity.message });
 
     const discount = coupon.calculateDiscount(orderAmount || 0);
-    res.json({ success: true, coupon: { code: coupon.code, discount, description: coupon.description } });
+    res.json({
+      success: true,
+      coupon: { code: coupon.code, discount, description: coupon.description },
+    });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
@@ -46,7 +58,9 @@ router.post('/', protect, adminOnly, async (req, res) => {
 // PUT /api/coupons/:id — [Admin] Update coupon
 router.put('/:id', protect, adminOnly, async (req, res) => {
   try {
-    const coupon = await Coupon.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const coupon = await Coupon.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
     res.json({ success: true, coupon });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
