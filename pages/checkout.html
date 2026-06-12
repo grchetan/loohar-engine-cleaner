@@ -23,14 +23,14 @@
         <li><a href="../index.html" class="nav-link">Home</a></li>
         <li><a href="products.html" class="nav-link">Products</a></li>
       </ul>
-      <span style="font-size:0.85rem; color:rgba(255,255,255,0.4)" id="checkoutUserEmail">email@domain.com</span>
+      <span style="font-size:0.85rem; color:var(--white-3)" id="checkoutUserEmail">email@domain.com</span>
     </div>
   </nav>
 
   <!-- ======= SECURE CHECKOUT BODY ======= -->
   <section style="padding: 140px 0 80px;">
     <div class="container">
-      <h2 style="color:#fff; font-family:Outfit,sans-serif; margin-bottom:30px; font-weight:700">Secure Checkout</h2>
+      <h2 style="color:var(--white); font-family:Outfit,sans-serif; margin-bottom:30px; font-weight:700">Secure Checkout</h2>
 
       <div class="checkout-grid" style="display:grid; grid-template-columns:1.8fr 1.2fr; gap:30px">
         
@@ -39,7 +39,7 @@
           
           <!-- 1. Shipping Address Selection -->
           <div class="glass-card" style="padding:24px">
-            <h3 style="color:#fff; font-family:Outfit; margin-bottom:15px">1. Shipping Address</h3>
+            <h3 style="color:var(--white); font-family:Outfit; margin-bottom:15px">1. Shipping Address</h3>
             
             <div id="savedAddressesList">
               <!-- Dynamically populated -->
@@ -48,8 +48,8 @@
             <button onclick="showNewAddressForm()" class="btn-secondary btn-sm" style="margin-top:10px; width:100%; border-style:dashed;">+ Add New Address</button>
             
             <!-- Add New Address Form (hidden initially unless no addresses exist) -->
-            <div id="newAddressForm" style="display:none; margin-top:20px; border-top:1px solid rgba(255,255,255,0.08); padding-top:20px">
-              <h4 style="color:#fff; margin-bottom:15px">New Shipping Address</h4>
+            <div id="newAddressForm" style="display:none; margin-top:20px; border-top:1px solid rgba(27, 26, 23, 0.08); padding-top:20px">
+              <h4 style="color:var(--white); margin-bottom:15px">New Shipping Address</h4>
               <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
                 <div class="form-group">
                   <label>Full Name *</label>
@@ -87,8 +87,8 @@
 
           <!-- 2. GST & Tax Billing Info (Optional) -->
           <div class="glass-card" style="padding:24px">
-            <h3 style="color:#fff; font-family:Outfit; margin-bottom:6px">2. Business / GST Details <span style="font-size:0.8rem; color:rgba(255,255,255,0.4)">(Optional)</span></h3>
-            <p style="font-size:0.8rem; color:rgba(255,255,255,0.5); margin-bottom:15px">Claim input tax credit (ITC) for your garage or workshop.</p>
+            <h3 style="color:var(--white); font-family:Outfit; margin-bottom:6px">2. Business / GST Details <span style="font-size:0.8rem; color:var(--white-3)">(Optional)</span></h3>
+            <p style="font-size:0.8rem; color:var(--white-3); margin-bottom:15px">Claim input tax credit (ITC) for your garage or workshop.</p>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
               <div class="form-group" style="margin-bottom:0">
                 <label>Company Name</label>
@@ -103,23 +103,23 @@
 
           <!-- 3. Payment Method -->
           <div class="glass-card" style="padding:24px">
-            <h3 style="color:#fff; font-family:Outfit; margin-bottom:15px">3. Payment Method</h3>
+            <h3 style="color:var(--white); font-family:Outfit; margin-bottom:15px">3. Payment Method</h3>
             
             <div class="payment-methods-grid" style="display:flex; flex-direction:column; gap:12px">
               
-              <label class="payment-option-label" style="display:flex; align-items:center; gap:12px; cursor:pointer; padding:15px; border:1px solid rgba(255,255,255,0.1); border-radius:10px; background:rgba(255,255,255,0.02)">
-                <input type="radio" name="paymentMethod" value="razorpay" checked style="accent-color:#f5c518">
+              <label class="payment-option-label" style="display:flex; align-items:center; gap:12px; cursor:pointer; padding:15px; border:1px solid rgba(27, 26, 23, 0.08); border-radius:10px; background:#ffffff">
+                <input type="radio" name="paymentMethod" value="razorpay" checked style="accent-color:var(--yellow)">
                 <div>
-                  <strong style="color:#fff; font-size:0.92rem; display:block">Pay Online (UPI, Cards, Netbanking)</strong>
-                  <span style="font-size:0.75rem; color:rgba(255,255,255,0.5)">Pay securely via UPI (Google Pay, PhonePe), Cards, or Netbanking.</span>
+                  <strong style="color:var(--white); font-size:0.92rem; display:block">Pay Online (UPI, Cards, Netbanking)</strong>
+                  <span style="font-size:0.75rem; color:var(--white-3)">Pay securely via UPI (Google Pay, PhonePe), Cards, or Netbanking.</span>
                 </div>
               </label>
 
-              <label class="payment-option-label" style="display:flex; align-items:center; gap:12px; cursor:pointer; padding:15px; border:1px solid rgba(255,255,255,0.1); border-radius:10px; background:rgba(255,255,255,0.02)">
-                <input type="radio" name="paymentMethod" value="cod" style="accent-color:#f5c518">
+              <label class="payment-option-label" style="display:flex; align-items:center; gap:12px; cursor:pointer; padding:15px; border:1px solid rgba(27, 26, 23, 0.08); border-radius:10px; background:#ffffff">
+                <input type="radio" name="paymentMethod" value="cod" style="accent-color:var(--yellow)">
                 <div>
-                  <strong style="color:#fff; font-size:0.92rem; display:block">Cash On Delivery</strong>
-                  <span style="font-size:0.75rem; color:rgba(255,255,255,0.5)">Pay in cash or UPI when the courier delivers your package.</span>
+                  <strong style="color:var(--white); font-size:0.92rem; display:block">Cash On Delivery</strong>
+                  <span style="font-size:0.75rem; color:var(--white-3)">Pay in cash or UPI when the courier delivers your package.</span>
                 </div>
               </label>
             </div>
@@ -127,7 +127,7 @@
 
           <!-- Notes -->
           <div class="glass-card" style="padding:20px">
-            <label style="color:#fff; font-weight:600; font-size:0.9rem; display:block; margin-bottom:8px">Delivery Instructions / Notes</label>
+            <label style="color:var(--white); font-weight:600; font-size:0.9rem; display:block; margin-bottom:8px">Delivery Instructions / Notes</label>
             <input type="text" id="orderNotesInput" placeholder="e.g. Leave at gate, call before delivery" style="margin-bottom:0">
           </div>
 
@@ -136,11 +136,11 @@
         <!-- Right: Order Summary & Placement -->
         <div class="checkout-right-col">
           <div class="glass-card" style="padding:24px; position:sticky; top:120px">
-            <h3 style="color:#fff; font-family:Outfit; margin-bottom:15px">Order Summary</h3>
-            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.08); margin: 15px 0;">
+            <h3 style="color:var(--white); font-family:Outfit; margin-bottom:15px">Order Summary</h3>
+            <hr style="border: 0; border-top: 1px solid rgba(27, 26, 23, 0.08); margin: 15px 0;">
 
             <!-- Checkout items list -->
-            <div id="checkoutItems" style="max-height:180px; overflow-y:auto; margin-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:10px">
+            <div id="checkoutItems" style="max-height:180px; overflow-y:auto; margin-bottom:15px; border-bottom:1px solid rgba(27, 26, 23, 0.06); padding-bottom:10px">
               <!-- Dynamically populated -->
             </div>
 
@@ -160,8 +160,8 @@
               <span id="summaryDiscount">- ₹0</span>
             </div>
 
-            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.08); margin: 15px 0;">
-            <div class="cart-total-row grand-total" style="font-size:1.2rem; display:flex; justify-content:space-between; font-weight:800;"><span>Total Payable</span><span id="summaryTotal" style="color:#f5c518">₹0</span></div>
+            <hr style="border: 0; border-top: 1px solid rgba(27, 26, 23, 0.08); margin: 15px 0;">
+            <div class="cart-total-row grand-total" style="font-size:1.2rem; display:flex; justify-content:space-between; font-weight:800;"><span>Total Payable</span><span id="summaryTotal" style="color:var(--yellow)">₹0</span></div>
 
             <button id="placeOrderBtn" class="btn-primary btn-full" style="margin-top: 24px; padding: 14px; font-weight:800; font-size:1.05rem; background:#f5c518; color:#000; border-color:#f5c518;" onclick="placeOrder()">Confirm Order</button>
           </div>

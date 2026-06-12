@@ -45,8 +45,8 @@ const renderCheckoutItems = () => {
 
   container.innerHTML = checkoutCart.items.map(item => `
     <div class="checkout-item-mini" style="display:flex; justify-content:space-between; margin-bottom:12px; font-size:0.88rem;">
-      <span style="color:rgba(255,255,255,0.7)">${item.product?.name || item.name} <strong>x${item.qty}</strong></span>
-      <span style="color:#fff; font-weight:600">₹${(item.price || item.product?.price) * item.qty}</span>
+      <span style="color:var(--white-2)">${item.product?.name || item.name} <strong>x${item.qty}</strong></span>
+      <span style="color:var(--white); font-weight:600">₹${(item.price || item.product?.price) * item.qty}</span>
     </div>
   `).join('');
 };
@@ -62,19 +62,19 @@ const loadAddresses = async () => {
     saveUser(user); // Sync local info
 
     if (!user.addresses || user.addresses.length === 0) {
-      container.innerHTML = `<p style="font-size:0.85rem; color:rgba(255,255,255,0.4)">No saved addresses found. Please add a shipping address below.</p>`;
+      container.innerHTML = `<p style="font-size:0.85rem; color:var(--white-3)">No saved addresses found. Please add a shipping address below.</p>`;
       selectedAddressId = null;
       document.getElementById('newAddressForm').style.display = 'block';
       return;
     }
 
     container.innerHTML = user.addresses.map(addr => `
-      <div class="glass-card address-card ${addr.isDefault ? 'selected' : ''}" data-id="${addr._id}" onclick="selectAddress('${addr._id}')" style="padding:15px; margin-bottom:10px; cursor:pointer; border:1px solid rgba(255,255,255,0.1); border-radius:10px;">
+      <div class="glass-card address-card ${addr.isDefault ? 'selected' : ''}" data-id="${addr._id}" onclick="selectAddress('${addr._id}')" style="padding:15px; margin-bottom:10px; cursor:pointer; border:1px solid rgba(27, 26, 23, 0.08); border-radius:10px; background:#ffffff;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px">
-          <strong style="color:#fff">${addr.label}</strong>
-          <span style="font-size:0.75rem; background:#f5c518; color:#000; padding:2px 6px; border-radius:4px; font-weight:700">${addr.phone}</span>
+          <strong style="color:var(--white)">${addr.label}</strong>
+          <span style="font-size:0.75rem; background:var(--yellow); color:#000; padding:2px 6px; border-radius:4px; font-weight:700">${addr.phone}</span>
         </div>
-        <p style="font-size:0.82rem; color:rgba(255,255,255,0.7); line-height:1.4">${addr.fullName}<br>${addr.line1}, ${addr.line2 || ''}<br>${addr.city}, ${addr.state} - ${addr.pincode}</p>
+        <p style="font-size:0.82rem; color:var(--white-2); line-height:1.4">${addr.fullName}<br>${addr.line1}, ${addr.line2 || ''}<br>${addr.city}, ${addr.state} - ${addr.pincode}</p>
       </div>
     `).join('');
 
@@ -91,11 +91,11 @@ window.selectAddress = (addressId) => {
   document.querySelectorAll('.address-card').forEach(el => {
     el.classList.toggle('selected', el.getAttribute('data-id') === addressId);
     if (el.getAttribute('data-id') === addressId) {
-      el.style.borderColor = '#f5c518';
-      el.style.background = 'rgba(245,197,24,0.03)';
+      el.style.borderColor = 'var(--yellow)';
+      el.style.background = 'rgba(214,175,55,0.05)';
     } else {
-      el.style.borderColor = 'rgba(255,255,255,0.1)';
-      el.style.background = 'rgba(255,255,255,0.02)';
+      el.style.borderColor = 'rgba(27, 26, 23, 0.08)';
+      el.style.background = '#ffffff';
     }
   });
   document.getElementById('newAddressForm').style.display = 'none';
@@ -105,8 +105,8 @@ window.selectAddress = (addressId) => {
 window.showNewAddressForm = () => {
   selectedAddressId = null;
   document.querySelectorAll('.address-card').forEach(el => {
-    el.style.borderColor = 'rgba(255,255,255,0.1)';
-    el.style.background = 'rgba(255,255,255,0.02)';
+    el.style.borderColor = 'rgba(27, 26, 23, 0.08)';
+    el.style.background = '#ffffff';
   });
   document.getElementById('newAddressForm').style.display = 'block';
 };
