@@ -237,3 +237,28 @@
     gap: 16px;
   }
 }
+
+/* Admin Text Logo Styling */
+.logo-icon {
+  font-size: 1.5rem;
+  color: var(--yellow);
+  animation: spin-gear 8s linear infinite;
+  display: inline-block;
+  line-height: 1;
+}
+.logo-text {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: 0.5px;
+}
+.logo-accent {
+  color: var(--yellow);
+  font-weight: 900;
+}
+
+@keyframes spin-gear {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
