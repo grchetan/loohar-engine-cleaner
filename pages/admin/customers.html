@@ -13,7 +13,7 @@
     <div class="nav-container">
       <a href="/" class="nav-logo"><span class="logo-icon">⚙</span><span class="logo-text">LOHAR <span class="logo-accent">ADMIN</span></span></a>
       <div style="margin-left:auto;display:flex;gap:12px;align-items:center">
-        <span id="adminName" style="color:rgba(255,255,255,0.6);font-size:0.88rem"></span>
+        <span id="adminName" style="color:var(--white-3);font-size:0.88rem"></span>
         <a href="/" class="btn-outline btn-sm">View Site</a>
         <button onclick="logoutUser()" class="btn-secondary btn-sm">Logout</button>
       </div>
@@ -55,7 +55,7 @@
               </tr>
             </thead>
             <tbody id="customersTableBody">
-              <tr><td colspan="7" style="text-align:center; color:rgba(255,255,255,0.4)">Loading customers...</td></tr>
+              <tr><td colspan="7" style="text-align:center; color:var(--white-3)">Loading customers...</td></tr>
             </tbody>
           </table>
         </div>
@@ -97,7 +97,7 @@
 
         const tbody = document.getElementById('customersTableBody');
         if (customersList.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:rgba(255,255,255,0.4)">No customers registered</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:var(--white-3)">No customers registered</td></tr>';
           return;
         }
 

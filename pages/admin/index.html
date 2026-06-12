@@ -13,7 +13,7 @@
     <div class="nav-container">
       <a href="/" class="nav-logo"><span class="logo-icon">⚙</span><span class="logo-text">LOHAR <span class="logo-accent">ADMIN</span></span></a>
       <div style="margin-left:auto;display:flex;gap:12px;align-items:center">
-        <span id="adminName" style="color:rgba(255,255,255,0.6);font-size:0.88rem"></span>
+        <span id="adminName" style="color:var(--white-3);font-size:0.88rem"></span>
         <a href="/" class="btn-outline btn-sm">View Site</a>
         <button onclick="logoutUser()" class="btn-secondary btn-sm">Logout</button>
       </div>
@@ -57,7 +57,7 @@
         <div class="data-table-wrap">
           <table class="data-table">
             <thead><tr><th>Order ID</th><th>Customer</th><th>Amount</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
-            <tbody id="recentOrdersBody"><tr><td colspan="6" style="text-align:center;color:rgba(255,255,255,0.4)">Loading...</td></tr></tbody>
+            <tbody id="recentOrdersBody"><tr><td colspan="6" style="text-align:center;color:var(--white-3)">Loading...</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -103,12 +103,12 @@
         // Recent Orders
         const tbody = document.getElementById('recentOrdersBody');
         if (recentOrders.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:rgba(255,255,255,0.4)">No orders yet</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--white-3)">No orders yet</td></tr>';
         } else {
           tbody.innerHTML = recentOrders.map(o => `
             <tr>
               <td><a href="orders.html?id=${o.orderId}" style="color:var(--yellow);font-weight:700">${o.orderId}</a></td>
-              <td>${o.user?.name || 'Guest'}<br><small style="color:rgba(255,255,255,0.4)">${o.user?.email || ''}</small></td>
+              <td>${o.user?.name || 'Guest'}<br><small style="color:var(--white-3)">${o.user?.email || ''}</small></td>
               <td>₹${o.total}</td>
               <td><span class="order-status status-${o.status.toLowerCase().replace(/ /g,'-')}">${o.status}</span></td>
               <td>${new Date(o.createdAt).toLocaleDateString('en-IN')}</td>
@@ -120,7 +120,7 @@
         // Low Stock
         const lowStockEl = document.getElementById('lowStockBody');
         if (!lowStock || lowStock.length === 0) {
-          lowStockEl.innerHTML = '<p style="color:rgba(255,255,255,0.4)">All products have sufficient stock ✅</p>';
+          lowStockEl.innerHTML = '<p style="color:var(--white-3)">All products have sufficient stock ✅</p>';
         } else {
           lowStockEl.innerHTML = lowStock.map(p => `
             <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:rgba(239,68,68,0.05);border-radius:10px">

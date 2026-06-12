@@ -13,7 +13,7 @@
     <div class="nav-container">
       <a href="/" class="nav-logo"><span class="logo-icon">⚙</span><span class="logo-text">LOHAR <span class="logo-accent">ADMIN</span></span></a>
       <div style="margin-left:auto;display:flex;gap:12px;align-items:center">
-        <span id="adminName" style="color:rgba(255,255,255,0.6);font-size:0.88rem"></span>
+        <span id="adminName" style="color:var(--white-3);font-size:0.88rem"></span>
         <a href="/" class="btn-outline btn-sm">View Site</a>
         <button onclick="logoutUser()" class="btn-secondary btn-sm">Logout</button>
       </div>
@@ -54,7 +54,7 @@
               </tr>
             </thead>
             <tbody id="couponsTableBody">
-              <tr><td colspan="9" style="text-align:center; color:rgba(255,255,255,0.4)">Loading coupons...</td></tr>
+              <tr><td colspan="9" style="text-align:center; color:var(--white-3)">Loading coupons...</td></tr>
             </tbody>
           </table>
         </div>
@@ -64,8 +64,8 @@
       <div id="couponModal" class="modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:2000; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px)">
         <div class="modal-content glass-card" style="width:500px; max-width:95vw; padding:28px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
-            <h3 style="color:#fff; font-family:Outfit; margin:0" id="modalTitle">Add Coupon</h3>
-            <button onclick="closeCouponModal()" style="background:none; border:none; color:rgba(255,255,255,0.6); font-size:1.8rem; cursor:pointer">&times;</button>
+            <h3 style="color:var(--white); font-family:Outfit; margin:0" id="modalTitle">Add Coupon</h3>
+            <button onclick="closeCouponModal()" style="background:none; border:none; color:var(--white-3); font-size:1.8rem; cursor:pointer">&times;</button>
           </div>
 
           <form id="couponForm" onsubmit="saveCoupon(event)">
@@ -146,7 +146,7 @@
 
         const tbody = document.getElementById('couponsTableBody');
         if (couponsList.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; color:rgba(255,255,255,0.4)">No coupons created</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; color:var(--white-3)">No coupons created</td></tr>';
           return;
         }
 
