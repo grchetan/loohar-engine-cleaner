@@ -79,7 +79,11 @@
         if (user.role !== 'admin') { window.location.href = '/'; return; }
         document.getElementById('adminName').textContent = user.name;
         loadAdminReviews();
-      } catch { window.location.href = '/pages/auth.html'; }
+      } catch (err) {
+        clearToken();
+        clearUser();
+        window.location.href = '/pages/auth.html?redirect=/pages/admin/reviews.html';
+      }
     });
 
     async function loadAdminReviews() {

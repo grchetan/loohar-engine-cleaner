@@ -85,7 +85,11 @@
         });
 
         loadCustomers();
-      } catch { window.location.href = '/pages/auth.html'; }
+      } catch (err) {
+        clearToken();
+        clearUser();
+        window.location.href = '/pages/auth.html?redirect=/pages/admin/customers.html';
+      }
     });
 
     async function loadCustomers(search = '') {

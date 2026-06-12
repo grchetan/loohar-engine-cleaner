@@ -1489,11 +1489,18 @@ ul {
   margin-bottom: 8px;
 }
 .form-group input,
-.form-group select {
+.form-group select,
+.form-group textarea,
+.admin-main select,
+.admin-main input[type="text"],
+.admin-main input[type="number"],
+.admin-main input[type="date"],
+.admin-main input[type="email"],
+.admin-main textarea {
   width: 100%;
   padding: 14px 16px;
-  background: rgba(0, 0, 0, 0.03);
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  border: 1px solid var(--black-4);
   border-radius: 10px;
   color: var(--white);
   font-size: 0.9rem;
@@ -1502,10 +1509,17 @@ ul {
   outline: none;
 }
 .form-group input:focus,
-.form-group select:focus {
+.form-group select:focus,
+.form-group textarea:focus,
+.admin-main select:focus,
+.admin-main input[type="text"]:focus,
+.admin-main input[type="number"]:focus,
+.admin-main input[type="date"]:focus,
+.admin-main input[type="email"]:focus,
+.admin-main textarea:focus {
   border-color: var(--yellow);
-  background: rgba(245, 197, 24, 0.05);
-  box-shadow: 0 0 0 3px rgba(245, 197, 24, 0.1);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(220, 161, 28, 0.15);
 }
 .form-group input::placeholder {
   color: rgba(18, 18, 18, 0.4);

@@ -61,7 +61,7 @@
       </div>
 
       <!-- Coupon Modal -->
-      <div id="couponModal" class="modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:2000; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px)">
+      <div id="couponModal" class="modal-overlay" style="display:none">
         <div class="modal-content glass-card" style="width:500px; max-width:95vw; padding:28px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
             <h3 style="color:var(--white); font-family:Outfit; margin:0" id="modalTitle">Add Coupon</h3>
@@ -136,7 +136,11 @@
         if (user.role !== 'admin') { window.location.href = '/'; return; }
         document.getElementById('adminName').textContent = user.name;
         loadAdminCoupons();
-      } catch { window.location.href = '/pages/auth.html'; }
+      } catch (err) {
+        clearToken();
+        clearUser();
+        window.location.href = '/pages/auth.html?redirect=/pages/admin/coupons.html';
+      }
     });
 
     async function loadAdminCoupons() {

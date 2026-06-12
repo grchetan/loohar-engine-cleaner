@@ -83,7 +83,11 @@
         saveUser(user);
         document.getElementById('adminName').textContent = user.name;
         loadDashboard();
-      } catch { window.location.href = '/pages/auth.html?redirect=/pages/admin/'; }
+      } catch (err) {
+        clearToken();
+        clearUser();
+        window.location.href = '/pages/auth.html?redirect=/pages/admin/';
+      }
     });
 
     async function loadDashboard() {

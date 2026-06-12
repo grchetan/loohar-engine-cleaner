@@ -2245,3 +2245,10 @@ body.bg-dark {
   }
 }
 
+/* Premium Modal Overrides */
+.modal-content.glass-card {
+  background: rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 0 24px 80px rgba(27, 26, 23, 0.15) !important;
+  border: 1px solid var(--glass-border) !important;
+}
+
