@@ -50,10 +50,10 @@ const uploadToCloudinary = (buffer, folder = 'lohar-auto') => {
       stream.end(buffer);
     });
   } else {
-    // Fallback: save file locally to ../assets/uploads/
+    // Fallback: save file locally to ../../assets/uploads/
     return new Promise((resolve, reject) => {
       try {
-        const uploadDir = path.join(__dirname, '..', 'assets', 'uploads');
+        const uploadDir = path.join(__dirname, '..', '..', 'assets', 'uploads');
         if (!fs.existsSync(uploadDir)) {
           fs.mkdirSync(uploadDir, { recursive: true });
         }
@@ -76,7 +76,7 @@ const deleteFromCloudinary = async (imageUrl) => {
   } else if (imageUrl.startsWith('/assets/uploads/')) {
     try {
       const fileName = path.basename(imageUrl);
-      const filePath = path.join(__dirname, '..', 'assets', 'uploads', fileName);
+      const filePath = path.join(__dirname, '..', '..', 'assets', 'uploads', fileName);
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
       }
