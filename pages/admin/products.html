@@ -136,7 +136,8 @@
             <div class="form-group">
               <label>Product Images</label>
               <input type="file" id="prodImages" multiple accept="image/*" style="padding:10px 0; background:none; border:none;">
-              <small style="color:var(--white-3)">Select up to 5 image files. Leave blank to retain existing ones.</small>
+              <small style="color:var(--white-3); display:block; margin-bottom:8px;">Select up to 5 image files. Leave blank to retain existing ones.</small>
+              <div id="imagePreviewContainer" style="display:flex; flex-wrap:wrap; gap:12px; margin-top:8px"></div>
             </div>
 
             <div style="display:flex; justify-content:space-between; margin-top:20px">
@@ -169,6 +170,31 @@
         const { user } = await AuthAPI.me();
         if (user.role !== 'admin') { window.location.href = '/'; return; }
         document.getElementById('adminName').textContent = user.name;
+        
+        // Setup image preview change listener
+        document.getElementById('prodImages').addEventListener('change', (e) => {
+          const files = e.target.files;
+          const previewContainer = document.getElementById('imagePreviewContainer');
+          const id = document.getElementById('editProductId').value;
+          
+          if (!id) {
+            previewContainer.innerHTML = Array.from(files).map(file => `
+              <div style="position:relative; width:80px; height:80px; border:1px solid var(--glass-border); border-radius:8px; overflow:hidden; background:var(--black-2)">
+                <img src="${URL.createObjectURL(file)}" style="width:100%; height:100%; object-fit:contain">
+              </div>
+            `).join('');
+          } else {
+            renderPreviews();
+            const localPreviewsHTML = Array.from(files).map(file => `
+              <div style="position:relative; width:80px; height:80px; border:1.5px dashed var(--yellow); border-radius:8px; overflow:hidden; background:var(--black-2); opacity: 0.7">
+                <img src="${URL.createObjectURL(file)}" style="width:100%; height:100%; object-fit:contain">
+                <div style="position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.6); color:#fff; font-size:9px; text-align:center; padding:2px 0;">NEW</div>
+              </div>
+            `).join('');
+            previewContainer.innerHTML += localPreviewsHTML;
+          }
+        });
+
         loadAdminProducts();
       } catch (err) {
         clearToken();
@@ -220,9 +246,39 @@
       } catch (err) { toast.error(err.message || 'Failed to update stock'); }
     }
 
+    let currentEditingImages = [];
+
+    function renderPreviews() {
+      const previewContainer = document.getElementById('imagePreviewContainer');
+      previewContainer.innerHTML = currentEditingImages.map((img, idx) => `
+        <div style="position:relative; width:80px; height:80px; border:1px solid var(--glass-border); border-radius:8px; overflow:hidden; background:var(--black-2)">
+          <img src="${img}" style="width:100%; height:100%; object-fit:contain">
+          <button type="button" onclick="removeCurrentImage(${idx})" style="position:absolute; top:2px; right:2px; background:#ef4444; color:#fff; border:none; border-radius:50%; width:20px; height:20px; font-size:12px; line-height:20px; text-align:center; cursor:pointer; padding:0; display:flex; align-items:center; justify-content:center;">&times;</button>
+        </div>
+      `).join('');
+    }
+
+    window.removeCurrentImage = (index) => {
+      currentEditingImages.splice(index, 1);
+      renderPreviews();
+      // Re-append selected files if any
+      const files = document.getElementById('prodImages').files;
+      if (files.length > 0) {
+        const localPreviewsHTML = Array.from(files).map(file => `
+          <div style="position:relative; width:80px; height:80px; border:1.5px dashed var(--yellow); border-radius:8px; overflow:hidden; background:var(--black-2); opacity: 0.7">
+            <img src="${URL.createObjectURL(file)}" style="width:100%; height:100%; object-fit:contain">
+            <div style="position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.6); color:#fff; font-size:9px; text-align:center; padding:2px 0;">NEW</div>
+          </div>
+        `).join('');
+        document.getElementById('imagePreviewContainer').innerHTML += localPreviewsHTML;
+      }
+    };
+
     function openProductModal() {
       document.getElementById('editProductId').value = '';
       document.getElementById('productForm').reset();
+      currentEditingImages = [];
+      document.getElementById('imagePreviewContainer').innerHTML = '';
       document.getElementById('modalTitle').textContent = 'Add New Product';
       document.getElementById('productModal').style.display = 'flex';
     }
@@ -249,6 +305,9 @@
       document.getElementById('prodHsn').value = p.hsn || '';
       document.getElementById('prodFeatured').checked = !!p.isFeatured;
       document.getElementById('prodBestseller').checked = !!p.isBestseller;
+
+      currentEditingImages = [...(p.images || [])];
+      renderPreviews();
 
       document.getElementById('modalTitle').textContent = 'Edit Product';
       document.getElementById('productModal').style.display = 'flex';
@@ -295,11 +354,7 @@
         }
 
         if (id) {
-          // If editing and didn't upload files, send existing images
-          const p = productsList.find(item => item._id === id);
-          if (p && p.images) {
-            formData.append('keepImages', p.images.join(','));
-          }
+          formData.append('keepImages', currentEditingImages.join(','));
           await ProductsAPI.update(id, formData);
           toast.success('Product updated successfully!');
         } else {

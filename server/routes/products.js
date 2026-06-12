@@ -124,16 +124,36 @@ router.put(
   async (req, res) => {
     try {
       const data = { ...req.body };
+      const keptImages = data.keepImages !== undefined
+        ? data.keepImages.split(',').filter(Boolean)
+        : null;
+
+      let imageUrls = [];
       if (req.files && req.files.length > 0) {
-        const imageUrls = await Promise.all(
+        imageUrls = await Promise.all(
           req.files.map((file) =>
             uploadToCloudinary(file.buffer, 'lohar-auto/products'),
           ),
         );
-        data.images = data.keepImages
-          ? [...data.keepImages.split(',').filter(Boolean), ...imageUrls]
-          : imageUrls;
       }
+
+      if (keptImages !== null || imageUrls.length > 0) {
+        const originalImages = keptImages || [];
+        data.images = [...originalImages, ...imageUrls];
+        
+        try {
+          const product = await Product.findById(req.params.id);
+          if (product && product.images) {
+            const deleted = product.images.filter(img => !originalImages.includes(img));
+            for (const img of deleted) {
+              await deleteFromCloudinary(img).catch(() => {});
+            }
+          }
+        } catch (err) {
+          console.error('Error cleaning up deleted images:', err);
+        }
+      }
+
       if (data.features && typeof data.features === 'string') {
         data.features = data.features.split('\n').filter(Boolean);
       }
