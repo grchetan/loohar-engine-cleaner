@@ -11,12 +11,20 @@ const getToken = () => localStorage.getItem('lag_token') || '';
 // Get session ID for guest cart
 const getSessionId = () => {
   let sid = localStorage.getItem('lag_session');
-  if (!sid) { sid = 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9); localStorage.setItem('lag_session', sid); }
+  if (!sid) {
+    sid = 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem('lag_session', sid);
+  }
   return sid;
 };
 
 // Core fetch wrapper
-const apiRequest = async (method, endpoint, data = null, isFormData = false) => {
+const apiRequest = async (
+  method,
+  endpoint,
+  data = null,
+  isFormData = false,
+) => {
   const headers = { 'x-session-id': getSessionId() };
   const token = getToken();
   if (token) headers['Authorization'] = `Bearer ${token}`;
@@ -26,7 +34,9 @@ const apiRequest = async (method, endpoint, data = null, isFormData = false) => 
   if (data) options.body = isFormData ? data : JSON.stringify(data);
 
   const res = await fetch(API_BASE + endpoint, options);
-  const json = await res.json().catch(() => ({ success: false, message: 'Server error' }));
+  const json = await res
+    .json()
+    .catch(() => ({ success: false, message: 'Server error' }));
   if (!res.ok) throw new Error(json.message || 'Request failed');
   return json;
 };
@@ -37,7 +47,8 @@ const api = {
   put: (endpoint, data) => apiRequest('PUT', endpoint, data),
   patch: (endpoint, data) => apiRequest('PATCH', endpoint, data),
   delete: (endpoint) => apiRequest('DELETE', endpoint),
-  postForm: (endpoint, formData) => apiRequest('POST', endpoint, formData, true),
+  postForm: (endpoint, formData) =>
+    apiRequest('POST', endpoint, formData, true),
   putForm: (endpoint, formData) => apiRequest('PUT', endpoint, formData, true),
 };
 
@@ -47,7 +58,8 @@ window.AuthAPI = {
   login: (data) => api.post('/auth/login', data),
   firebase: (idToken) => api.post('/auth/firebase', { idToken }),
   forgotPassword: (email) => api.post('/auth/forgot-password', { email }),
-  resetPassword: (token, password) => api.post(`/auth/reset-password/${token}`, { password }),
+  resetPassword: (token, password) =>
+    api.post(`/auth/reset-password/${token}`, { password }),
   me: () => api.get('/auth/me'),
   updateProfile: (data) => api.put('/auth/me', data),
   addAddress: (data) => api.put('/auth/me/address', data),
@@ -88,7 +100,8 @@ window.WishlistAPI = {
 window.OrdersAPI = {
   list: (params = {}) => api.get(`/orders?${new URLSearchParams(params)}`),
   get: (orderId) => api.get(`/orders/${orderId}`),
-  cancel: (orderId, reason) => api.post(`/orders/${orderId}/cancel`, { reason }),
+  cancel: (orderId, reason) =>
+    api.post(`/orders/${orderId}/cancel`, { reason }),
   invoiceUrl: (orderId) => `/api/orders/${orderId}/invoice`,
   createPaymentOrder: (data) => api.post('/payment/create-order', data),
   verifypayment: (data) => api.post('/payment/verify', data),
@@ -97,7 +110,8 @@ window.OrdersAPI = {
 
 // ===== COUPONS =====
 window.CouponsAPI = {
-  validate: (code, orderAmount) => api.post('/coupons/validate', { code, orderAmount }),
+  validate: (code, orderAmount) =>
+    api.post('/coupons/validate', { code, orderAmount }),
   list: () => api.get('/coupons'),
   create: (data) => api.post('/coupons', data),
   update: (id, data) => api.put(`/coupons/${id}`, data),
@@ -109,7 +123,8 @@ window.ReviewsAPI = {
   forProduct: (productId) => api.get(`/reviews/product/${productId}`),
   submit: (data) => api.post('/reviews', data),
   list: (params = {}) => api.get(`/reviews?${new URLSearchParams(params)}`),
-  approve: (id, approve = true) => api.put(`/reviews/${id}/approve`, { approve }),
+  approve: (id, approve = true) =>
+    api.put(`/reviews/${id}/approve`, { approve }),
   delete: (id) => api.delete(`/reviews/${id}`),
 };
 
@@ -123,18 +138,31 @@ window.DealerAPI = {
 // ===== ADMIN =====
 window.AdminAPI = {
   dashboard: () => api.get('/admin/dashboard'),
-  customers: (params = {}) => api.get(`/admin/customers?${new URLSearchParams(params)}`),
-  allOrders: (params = {}) => api.get(`/orders/admin/all?${new URLSearchParams(params)}`),
-  updateOrderStatus: (orderId, status, note) => api.put(`/orders/${orderId}/status`, { status, note }),
-  toggleCustomer: (id, isActive) => api.patch(`/admin/customers/${id}/status`, { isActive }),
+  customers: (params = {}) =>
+    api.get(`/admin/customers?${new URLSearchParams(params)}`),
+  allOrders: (params = {}) =>
+    api.get(`/orders/admin/all?${new URLSearchParams(params)}`),
+  updateOrderStatus: (orderId, status, note) =>
+    api.put(`/orders/${orderId}/status`, { status, note }),
+  toggleCustomer: (id, isActive) =>
+    api.patch(`/admin/customers/${id}/status`, { isActive }),
 };
 
 // ===== HELPERS =====
-window.saveToken = (token) => { if (token) localStorage.setItem('lag_token', token); };
+window.saveToken = (token) => {
+  if (token) localStorage.setItem('lag_token', token);
+};
 window.clearToken = () => localStorage.removeItem('lag_token');
 window.isLoggedIn = () => !!localStorage.getItem('lag_token');
 
 // Store/retrieve user info
-window.saveUser = (user) => localStorage.setItem('lag_user', JSON.stringify(user));
-window.getUser = () => { try { return JSON.parse(localStorage.getItem('lag_user')); } catch { return null; } };
+window.saveUser = (user) =>
+  localStorage.setItem('lag_user', JSON.stringify(user));
+window.getUser = () => {
+  try {
+    return JSON.parse(localStorage.getItem('lag_user'));
+  } catch {
+    return null;
+  }
+};
 window.clearUser = () => localStorage.removeItem('lag_user');

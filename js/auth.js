@@ -3,13 +3,14 @@
  */
 
 // Firebase config (populated from server or window.__FIREBASE_CONFIG__)
-const getFirebaseConfig = () => window.__FIREBASE_CONFIG__ || {
-  apiKey: "",
-  authDomain: "",
-  projectId: "",
-  messagingSenderId: "",
-  appId: "",
-};
+const getFirebaseConfig = () =>
+  window.__FIREBASE_CONFIG__ || {
+    apiKey: '',
+    authDomain: '',
+    projectId: '',
+    messagingSenderId: '',
+    appId: '',
+  };
 
 let firebaseAuth = null;
 let GoogleAuthProvider = null;
@@ -19,8 +20,17 @@ const loadFirebase = async () => {
   if (firebaseAuth) return firebaseAuth;
   if (!getFirebaseConfig().apiKey) return null;
 
-  const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js');
-  const { getAuth, GoogleAuthProvider: GAP, signInWithPopup, signOut, sendPasswordResetEmail, createUserWithEmailAndPassword, signInWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js');
+  const { initializeApp } =
+    await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js');
+  const {
+    getAuth,
+    GoogleAuthProvider: GAP,
+    signInWithPopup,
+    signOut,
+    sendPasswordResetEmail,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+  } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js');
 
   const app = initializeApp(getFirebaseConfig());
   firebaseAuth = getAuth(app);
@@ -37,7 +47,10 @@ const loadFirebase = async () => {
 window.signInWithGoogle = async () => {
   try {
     const auth = await loadFirebase();
-    if (!auth) { toast.warning('Google login not configured. Please use email login.'); return; }
+    if (!auth) {
+      toast.warning('Google login not configured. Please use email login.');
+      return;
+    }
     const provider = new GoogleAuthProvider();
     provider.addScope('email');
     const result = await window._fbSignInWithPopup(auth, provider);
@@ -88,11 +101,12 @@ window.logoutUser = async () => {
   try {
     await AuthAPI.logout().catch(() => {});
     const auth = firebaseAuth;
-    if (auth && window._fbSignOut) await window._fbSignOut(auth).catch(() => {});
+    if (auth && window._fbSignOut)
+      await window._fbSignOut(auth).catch(() => {});
     window.clearToken();
     window.clearUser();
     toast.info('Logged out successfully');
-    setTimeout(() => window.location.href = '/', 1000);
+    setTimeout(() => (window.location.href = '/'), 1000);
   } catch (err) {
     toast.error('Logout failed');
   }
@@ -108,7 +122,8 @@ window.updateAuthNav = () => {
   if (!authEl) {
     authEl = document.createElement('div');
     authEl.id = 'navAuthEl';
-    authEl.style.cssText = 'display:flex;align-items:center;gap:8px;flex-shrink:0;';
+    authEl.style.cssText =
+      'display:flex;align-items:center;gap:8px;flex-shrink:0;';
     const navCta = document.querySelector('.nav-cta');
     if (navCta) navCta.parentNode.insertBefore(authEl, navCta);
   }
@@ -145,4 +160,6 @@ document.addEventListener('click', (e) => {
 });
 
 // Initialize on load
-document.addEventListener('DOMContentLoaded', () => { if (window.updateAuthNav) updateAuthNav(); });
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.updateAuthNav) updateAuthNav();
+});

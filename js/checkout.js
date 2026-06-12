@@ -43,12 +43,16 @@ const renderCheckoutItems = () => {
   const container = document.getElementById('checkoutItems');
   if (!container) return;
 
-  container.innerHTML = checkoutCart.items.map(item => `
+  container.innerHTML = checkoutCart.items
+    .map(
+      (item) => `
     <div class="checkout-item-mini" style="display:flex; justify-content:space-between; margin-bottom:12px; font-size:0.88rem;">
       <span style="color:var(--white-2)">${item.product?.name || item.name} <strong>x${item.qty}</strong></span>
       <span style="color:var(--white); font-weight:600">₹${(item.price || item.product?.price) * item.qty}</span>
     </div>
-  `).join('');
+  `,
+    )
+    .join('');
 };
 
 // Load saved user addresses
@@ -68,7 +72,9 @@ const loadAddresses = async () => {
       return;
     }
 
-    container.innerHTML = user.addresses.map(addr => `
+    container.innerHTML = user.addresses
+      .map(
+        (addr) => `
       <div class="glass-card address-card ${addr.isDefault ? 'selected' : ''}" data-id="${addr._id}" onclick="selectAddress('${addr._id}')" style="padding:15px; margin-bottom:10px; cursor:pointer; border:1px solid rgba(27, 26, 23, 0.08); border-radius:10px; background:#ffffff;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px">
           <strong style="color:var(--white)">${addr.label}</strong>
@@ -76,11 +82,13 @@ const loadAddresses = async () => {
         </div>
         <p style="font-size:0.82rem; color:var(--white-2); line-height:1.4">${addr.fullName}<br>${addr.line1}, ${addr.line2 || ''}<br>${addr.city}, ${addr.state} - ${addr.pincode}</p>
       </div>
-    `).join('');
+    `,
+      )
+      .join('');
 
-    const defaultAddr = user.addresses.find(a => a.isDefault) || user.addresses[0];
+    const defaultAddr =
+      user.addresses.find((a) => a.isDefault) || user.addresses[0];
     if (defaultAddr) selectAddress(defaultAddr._id);
-
   } catch (err) {
     toast.error('Failed to load saved addresses');
   }
@@ -88,7 +96,7 @@ const loadAddresses = async () => {
 
 window.selectAddress = (addressId) => {
   selectedAddressId = addressId;
-  document.querySelectorAll('.address-card').forEach(el => {
+  document.querySelectorAll('.address-card').forEach((el) => {
     el.classList.toggle('selected', el.getAttribute('data-id') === addressId);
     if (el.getAttribute('data-id') === addressId) {
       el.style.borderColor = 'var(--yellow)';
@@ -104,7 +112,7 @@ window.selectAddress = (addressId) => {
 
 window.showNewAddressForm = () => {
   selectedAddressId = null;
-  document.querySelectorAll('.address-card').forEach(el => {
+  document.querySelectorAll('.address-card').forEach((el) => {
     el.style.borderColor = 'rgba(27, 26, 23, 0.08)';
     el.style.background = '#ffffff';
   });
@@ -115,7 +123,7 @@ window.showNewAddressForm = () => {
 const updateCheckoutSummary = () => {
   const items = checkoutCart.items || [];
   const subtotal = items.reduce((s, i) => s + (i.price || 0) * (i.qty || 0), 0);
-  
+
   // Flat shipping logic
   let shipping = 60;
   if (subtotal >= 1000) shipping = 0;
@@ -128,7 +136,8 @@ const updateCheckoutSummary = () => {
   if (activeCoupon) {
     if (activeCoupon.discountType === 'percent') {
       discount = Math.round((subtotal * activeCoupon.value) / 100);
-      if (activeCoupon.maxDiscountAmount) discount = Math.min(discount, activeCoupon.maxDiscountAmount);
+      if (activeCoupon.maxDiscountAmount)
+        discount = Math.min(discount, activeCoupon.maxDiscountAmount);
     } else {
       discount = activeCoupon.value;
     }
@@ -138,15 +147,20 @@ const updateCheckoutSummary = () => {
 
   document.getElementById('summarySubtotal').textContent = `₹${subtotal}`;
   document.getElementById('summaryGST').textContent = `₹${gst}`;
-  document.getElementById('summaryShipping').textContent = shipping === 0 ? 'FREE' : `₹${shipping}`;
-  document.getElementById('summaryDiscountRow').style.display = discount > 0 ? 'flex' : 'none';
+  document.getElementById('summaryShipping').textContent =
+    shipping === 0 ? 'FREE' : `₹${shipping}`;
+  document.getElementById('summaryDiscountRow').style.display =
+    discount > 0 ? 'flex' : 'none';
   document.getElementById('summaryDiscount').textContent = `- ₹${discount}`;
   document.getElementById('summaryTotal').textContent = `₹${grandTotal}`;
 };
 
 // Apply coupon code validation
 window.applyCoupon = async () => {
-  const code = document.getElementById('couponCodeInput').value.trim().toUpperCase();
+  const code = document
+    .getElementById('couponCodeInput')
+    .value.trim()
+    .toUpperCase();
   if (!code) return;
 
   const btn = document.getElementById('couponApplyBtn');
@@ -155,16 +169,20 @@ window.applyCoupon = async () => {
 
   try {
     const items = checkoutCart.items || [];
-    const subtotal = items.reduce((s, i) => s + (i.price || 0) * (i.qty || 0), 0);
+    const subtotal = items.reduce(
+      (s, i) => s + (i.price || 0) * (i.qty || 0),
+      0,
+    );
     const res = await CouponsAPI.validate(code, subtotal);
-    
+
     activeCoupon = res.coupon;
     updateCheckoutSummary();
     toast.success(`Coupon "${code}" applied successfully! 🏷`);
-    
+
     // UI update
     document.getElementById('couponSuccessMessage').style.display = 'block';
-    document.getElementById('couponSuccessMessage').textContent = `✓ ${res.message}`;
+    document.getElementById('couponSuccessMessage').textContent =
+      `✓ ${res.message}`;
   } catch (err) {
     activeCoupon = null;
     updateCheckoutSummary();
@@ -205,29 +223,36 @@ window.placeOrder = async () => {
       }
 
       addressObj = { fullName, phone, line1, line2, city, state, pincode };
-      
+
       // Proactively save address to profile for future convenience
-      await AuthAPI.addAddress({ ...addressObj, label: 'Home' }).catch(() => {});
+      await AuthAPI.addAddress({ ...addressObj, label: 'Home' }).catch(
+        () => {},
+      );
     }
 
-    const gstNumber = document.getElementById('gstNumberInput').value.trim() || undefined;
-    const companyName = document.getElementById('companyNameInput').value.trim() || undefined;
-    const notes = document.getElementById('orderNotesInput').value.trim() || undefined;
+    const gstNumber =
+      document.getElementById('gstNumberInput').value.trim() || undefined;
+    const companyName =
+      document.getElementById('companyNameInput').value.trim() || undefined;
+    const notes =
+      document.getElementById('orderNotesInput').value.trim() || undefined;
 
-    const itemsFormatted = checkoutCart.items.map(i => ({
+    const itemsFormatted = checkoutCart.items.map((i) => ({
       productId: i.product?._id || i.product,
       qty: i.qty,
-      name: i.product?.name || i.name
+      name: i.product?.name || i.name,
     }));
 
-    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+    const paymentMethod = document.querySelector(
+      'input[name="paymentMethod"]:checked',
+    ).value;
 
     const checkoutData = {
       items: itemsFormatted,
       couponCode: activeCoupon ? activeCoupon.code : undefined,
       gstNumber,
       companyName,
-      notes
+      notes,
     };
 
     if (typeof addressObj === 'string') {
@@ -241,7 +266,11 @@ window.placeOrder = async () => {
       const paymentOrder = await OrdersAPI.createPaymentOrder(checkoutData);
       const res = await OrdersAPI.codOrder(paymentOrder.orderData);
       toast.success('Order placed successfully! 📦');
-      setTimeout(() => window.location.href = `/pages/order-detail.html?orderId=${res.order.orderId}`, 1000);
+      setTimeout(
+        () =>
+          (window.location.href = `/pages/order-detail.html?orderId=${res.order.orderId}`),
+        1000,
+      );
     } else {
       // Razorpay checkout
       const payOrderRes = await OrdersAPI.createPaymentOrder(checkoutData);
@@ -250,7 +279,11 @@ window.placeOrder = async () => {
         // Fallback if Razorpay is not configured on server
         const res = await OrdersAPI.codOrder(payOrderRes.orderData);
         toast.info('Razorpay test mode enabled, checkout placed as COD');
-        setTimeout(() => window.location.href = `/pages/order-detail.html?orderId=${res.order.orderId}`, 1000);
+        setTimeout(
+          () =>
+            (window.location.href = `/pages/order-detail.html?orderId=${res.order.orderId}`),
+          1000,
+        );
         return;
       }
 
@@ -268,7 +301,7 @@ window.placeOrder = async () => {
               razorpayOrderId: response.razorpay_order_id,
               razorpayPaymentId: response.razorpay_payment_id,
               razorpaySignature: response.razorpay_signature,
-              orderData: payOrderRes.orderData
+              orderData: payOrderRes.orderData,
             });
             toast.success('Payment successful! 🎉');
             window.location.href = `/pages/order-detail.html?orderId=${verifyRes.order.orderId}`;
@@ -281,9 +314,9 @@ window.placeOrder = async () => {
         prefill: {
           name: getUser().name,
           email: getUser().email,
-          contact: typeof addressObj === 'object' ? addressObj.phone : ''
+          contact: typeof addressObj === 'object' ? addressObj.phone : '',
         },
-        theme: { color: '#f5c518' }
+        theme: { color: '#f5c518' },
       };
 
       const rzp1 = new window.Razorpay(options);

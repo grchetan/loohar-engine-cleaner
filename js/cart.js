@@ -5,7 +5,11 @@
 
 let cartState = { items: [], totalItems: 0, subtotal: 0 };
 const SHIPPING_FREE_THRESHOLD = 1000;
-const SHIPPING_RATES = [{ max: 499, rate: 60 }, { max: 999, rate: 40 }, { max: Infinity, rate: 0 }];
+const SHIPPING_RATES = [
+  { max: 499, rate: 60 },
+  { max: 999, rate: 40 },
+  { max: Infinity, rate: 0 },
+];
 
 const calcShipping = (subtotal) => {
   for (const tier of SHIPPING_RATES) if (subtotal <= tier.max) return tier.rate;
@@ -30,13 +34,17 @@ const loadCart = async () => {
 
 // ===== Save Cart to localStorage (guest) =====
 const persistCart = () => {
-  if (!isLoggedIn()) localStorage.setItem('lag_cart', JSON.stringify(cartState));
+  if (!isLoggedIn())
+    localStorage.setItem('lag_cart', JSON.stringify(cartState));
 };
 
 // ===== Add to Cart =====
 window.addToCart = async (productId, qty = 1, productData = null) => {
   const btn = document.querySelector(`[data-add-cart="${productId}"]`);
-  if (btn) { btn.disabled = true; btn.innerHTML = 'Adding...'; }
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = 'Adding...';
+  }
 
   try {
     if (isLoggedIn()) {
@@ -45,11 +53,19 @@ window.addToCart = async (productId, qty = 1, productData = null) => {
     } else {
       // Guest cart in localStorage
       if (!cartState.items) cartState.items = [];
-      const existing = cartState.items.find(i => i.product === productId || i.product?._id === productId);
+      const existing = cartState.items.find(
+        (i) => i.product === productId || i.product?._id === productId,
+      );
       if (existing) existing.qty = Math.min(existing.qty + qty, 20);
       else {
         const item = productData
-          ? { product: productId, qty, price: productData.price, name: productData.name, image: productData.images?.[0] || '' }
+          ? {
+              product: productId,
+              qty,
+              price: productData.price,
+              name: productData.name,
+              image: productData.images?.[0] || '',
+            }
           : { product: productId, qty };
         cartState.items.push(item);
       }
@@ -71,7 +87,10 @@ window.addToCart = async (productId, qty = 1, productData = null) => {
     }
   } catch (err) {
     toast.error(err.message || 'Failed to add to cart');
-    if (btn) { btn.disabled = false; btn.innerHTML = btn.getAttribute('data-original-text') || 'Add to Cart'; }
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = btn.getAttribute('data-original-text') || 'Add to Cart';
+    }
   }
 };
 
@@ -82,7 +101,9 @@ window.removeFromCart = async (productId) => {
       const res = await CartAPI.remove(productId);
       cartState = res.cart;
     } else {
-      cartState.items = cartState.items.filter(i => (i.product?._id || i.product) !== productId);
+      cartState.items = cartState.items.filter(
+        (i) => (i.product?._id || i.product) !== productId,
+      );
       persistCart();
     }
     updateCartUI();
@@ -100,9 +121,14 @@ window.updateCartQty = async (productId, qty) => {
       const res = await CartAPI.update(productId, qty);
       cartState = res.cart;
     } else {
-      const item = cartState.items.find(i => (i.product?._id || i.product) === productId);
+      const item = cartState.items.find(
+        (i) => (i.product?._id || i.product) === productId,
+      );
       if (item) {
-        if (qty <= 0) cartState.items = cartState.items.filter(i => (i.product?._id || i.product) !== productId);
+        if (qty <= 0)
+          cartState.items = cartState.items.filter(
+            (i) => (i.product?._id || i.product) !== productId,
+          );
         else item.qty = Math.min(qty, 20);
       }
       persistCart();
@@ -118,10 +144,13 @@ window.updateCartQty = async (productId, qty) => {
 const updateCartUI = () => {
   const items = cartState.items || [];
   const totalItems = items.reduce((sum, i) => sum + (i.qty || 0), 0);
-  const subtotal = items.reduce((sum, i) => sum + (i.price || 0) * (i.qty || 0), 0);
+  const subtotal = items.reduce(
+    (sum, i) => sum + (i.price || 0) * (i.qty || 0),
+    0,
+  );
 
   // Update badge
-  document.querySelectorAll('.cart-badge').forEach(el => {
+  document.querySelectorAll('.cart-badge').forEach((el) => {
     el.textContent = totalItems;
     el.style.display = totalItems > 0 ? 'flex' : 'none';
   });
@@ -227,12 +256,16 @@ const renderCartSidebar = () => {
   const total = subtotal + shipping;
   const freeShipLeft = Math.max(0, SHIPPING_FREE_THRESHOLD - subtotal);
 
-  body.innerHTML = items.map(item => {
-    const pid = item.product?._id || item.product;
-    const img = item.product?.images?.[0] || item.image || '/assets/images/hero_bottle.png';
-    const name = item.product?.name || item.name || 'Product';
-    const price = item.price || item.product?.price || 0;
-    return `
+  body.innerHTML = items
+    .map((item) => {
+      const pid = item.product?._id || item.product;
+      const img =
+        item.product?.images?.[0] ||
+        item.image ||
+        '/assets/images/hero_bottle.png';
+      const name = item.product?.name || item.name || 'Product';
+      const price = item.price || item.product?.price || 0;
+      return `
       <div class="cart-item">
         <img src="${img}" alt="${name}" class="cart-item-img" onerror="this.src='/assets/images/hero_bottle.png'">
         <div>
@@ -247,19 +280,22 @@ const renderCartSidebar = () => {
         <button class="cart-remove" onclick="removeFromCart('${pid}')" style="background:none !important; border:none !important; color:rgba(18,18,18,0.3) !important; font-size:1.5rem !important; cursor:pointer !important; padding:4px !important; line-height:1 !important; outline:none !important; box-shadow:none !important;" title="Remove">×</button>
       </div>
     `;
-  }).join('');
+    })
+    .join('');
 
   if (footer) {
     footer.style.display = 'block';
     const shippingBar = document.getElementById('cartShippingBar');
     const pct = Math.min((subtotal / SHIPPING_FREE_THRESHOLD) * 100, 100);
     if (shippingBar) {
-      shippingBar.innerHTML = freeShipLeft > 0
-        ? `Add <strong>₹${freeShipLeft}</strong> more for free shipping! <div class="cart-shipping-progress"><div class="cart-shipping-fill" style="width:${pct}%"></div></div>`
-        : `Free shipping applied to this order!`;
+      shippingBar.innerHTML =
+        freeShipLeft > 0
+          ? `Add <strong>₹${freeShipLeft}</strong> more for free shipping! <div class="cart-shipping-progress"><div class="cart-shipping-fill" style="width:${pct}%"></div></div>`
+          : `Free shipping applied to this order!`;
     }
     document.getElementById('cartSubtotal').textContent = `₹${subtotal}`;
-    document.getElementById('cartShipping').textContent = shipping === 0 ? 'FREE' : `₹${shipping}`;
+    document.getElementById('cartShipping').textContent =
+      shipping === 0 ? 'FREE' : `₹${shipping}`;
     document.getElementById('cartTotal').textContent = `₹${total}`;
   }
 };
@@ -356,7 +392,8 @@ const injectWhatsAppFloat = () => {
   const pill = document.createElement('a');
   pill.id = 'loharQuickOrder';
   pill.className = 'lohar-quick-order-pill';
-  pill.href = 'https://wa.me/919999999999?text=Hello%20Lohar%20Auto%20Garage%2C%20I%20would%20like%20to%20place%20an%20order%20for%20automotive%20cleaning%20products.%20Please%20assist%20me.';
+  pill.href =
+    'https://wa.me/919999999999?text=Hello%20Lohar%20Auto%20Garage%2C%20I%20would%20like%20to%20place%20an%20order%20for%20automotive%20cleaning%20products.%20Please%20assist%20me.';
   pill.target = '_blank';
   pill.innerHTML = `
     <svg width="28" height="28" viewBox="0 0 448 512" fill="currentColor" style="display:inline-block; vertical-align:middle;">
@@ -373,7 +410,7 @@ document.addEventListener('DOMContentLoaded', () => {
   injectWhatsAppFloat();
 
   // Set dynamic copyright year globally
-  document.querySelectorAll('.current-year, #currentYear').forEach(el => {
+  document.querySelectorAll('.current-year, #currentYear').forEach((el) => {
     el.textContent = new Date().getFullYear();
   });
 
