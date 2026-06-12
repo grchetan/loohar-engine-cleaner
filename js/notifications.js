@@ -28,12 +28,36 @@ const icons = {
 };
 
 const colors = {
-  success: { bg: 'rgba(16,185,129,0.1)', border: 'rgba(16,185,129,0.4)', icon: '#10b981' },
-  error: { bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.4)', icon: '#ef4444' },
-  warning: { bg: 'rgba(245,197,24,0.1)', border: 'rgba(245,197,24,0.4)', icon: '#f5c518' },
-  info: { bg: 'rgba(59,130,246,0.1)', border: 'rgba(59,130,246,0.4)', icon: '#3b82f6' },
-  cart: { bg: 'rgba(245,197,24,0.1)', border: 'rgba(245,197,24,0.4)', icon: '#f5c518' },
-  order: { bg: 'rgba(16,185,129,0.1)', border: 'rgba(16,185,129,0.4)', icon: '#10b981' },
+  success: {
+    bg: 'rgba(16,185,129,0.1)',
+    border: 'rgba(16,185,129,0.4)',
+    icon: '#10b981',
+  },
+  error: {
+    bg: 'rgba(239,68,68,0.1)',
+    border: 'rgba(239,68,68,0.4)',
+    icon: '#ef4444',
+  },
+  warning: {
+    bg: 'rgba(245,197,24,0.1)',
+    border: 'rgba(245,197,24,0.4)',
+    icon: '#f5c518',
+  },
+  info: {
+    bg: 'rgba(59,130,246,0.1)',
+    border: 'rgba(59,130,246,0.4)',
+    icon: '#3b82f6',
+  },
+  cart: {
+    bg: 'rgba(245,197,24,0.1)',
+    border: 'rgba(245,197,24,0.4)',
+    icon: '#f5c518',
+  },
+  order: {
+    bg: 'rgba(16,185,129,0.1)',
+    border: 'rgba(16,185,129,0.4)',
+    icon: '#10b981',
+  },
 };
 
 window.showToast = (message, type = 'info', duration = 4000) => {
@@ -64,7 +88,9 @@ window.showToast = (message, type = 'info', duration = 4000) => {
     </div>
     <button onclick="event.stopPropagation(); this.closest('[style]').remove()" style="background:none !important; border:none !important; color:rgba(255,255,255,0.4) !important; cursor:pointer !important; font-size:1.2rem !important; padding:0 !important; margin:0 !important; flex-shrink:0 !important; width:auto !important; height:auto !important; box-shadow:none !important; line-height:1 !important; font-family: sans-serif !important;">×</button>
   `;
-  toast.onclick = (e) => { if (e.target.tagName !== 'BUTTON') toast.remove(); };
+  toast.onclick = (e) => {
+    if (e.target.tagName !== 'BUTTON') toast.remove();
+  };
 
   // Inject animation
   if (!document.getElementById('lag-toast-style')) {

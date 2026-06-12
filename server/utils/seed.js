@@ -21,7 +21,7 @@ const seed = async () => {
       email: process.env.ADMIN_EMAIL || 'admin@loharautogarage.com',
       password: process.env.ADMIN_PASSWORD || 'Admin123!',
       role: 'admin',
-      phone: '+919999999999',
+      phone: '+919755255746',
     });
     console.log('✅ Admin user created');
   } else {
