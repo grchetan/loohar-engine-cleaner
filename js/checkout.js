@@ -8,7 +8,6 @@ let checkoutCart = { items: [], subtotal: 0 };
 let activeCoupon = null;
 let shippingAddressData = null;
 
-// Initialize checkout page
 window.initCheckout = async () => {
   if (!isLoggedIn()) {
     toast.warning('Please login to proceed to checkout');
@@ -16,8 +15,23 @@ window.initCheckout = async () => {
     return;
   }
 
-  const user = getUser();
-  document.getElementById('checkoutUserEmail').textContent = user.email;
+  let user = getUser();
+  if (!user || !user.email) {
+    try {
+      const res = await AuthAPI.me();
+      user = res.user;
+      saveUser(user);
+    } catch (err) {
+      clearToken();
+      clearUser();
+      toast.error('Session expired. Please log in again.');
+      window.location.href = `/pages/auth.html?redirect=${encodeURIComponent('/pages/checkout.html')}`;
+      return;
+    }
+  }
+
+  const emailEl = document.getElementById('checkoutUserEmail');
+  if (emailEl) emailEl.textContent = user.email || '';
 
   // Load cart
   try {
@@ -312,8 +326,8 @@ window.placeOrder = async () => {
           }
         },
         prefill: {
-          name: getUser().name,
-          email: getUser().email,
+          name: (getUser() || {}).name || '',
+          email: (getUser() || {}).email || '',
           contact: typeof addressObj === 'object' ? addressObj.phone : '',
         },
         theme: { color: '#f5c518' },

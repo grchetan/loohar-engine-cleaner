@@ -393,7 +393,7 @@ const injectWhatsAppFloat = () => {
   pill.id = 'loharQuickOrder';
   pill.className = 'lohar-quick-order-pill';
   pill.href =
-    'https://wa.me/919999999999?text=Hello%20Lohar%20Auto%20Garage%2C%20I%20would%20like%20to%20place%20an%20order%20for%20automotive%20cleaning%20products.%20Please%20assist%20me.';
+    'https://wa.me/919755255746?text=Hello%20Lohar%20Auto%20Garage%2C%20I%20would%20like%20to%20place%20an%20order%20for%20automotive%20cleaning%20products.%20Please%20assist%20me.';
   pill.target = '_blank';
   pill.innerHTML = `
     <svg width="28" height="28" viewBox="0 0 448 512" fill="currentColor" style="display:inline-block; vertical-align:middle;">

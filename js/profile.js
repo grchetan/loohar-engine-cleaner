@@ -31,7 +31,9 @@ window.loadProfile = async () => {
 
   } catch (err) {
     if (loader) loader.style.display = 'none';
-    toast.error('Failed to load profile details');
+    clearToken();
+    clearUser();
+    window.location.href = '/pages/auth.html?redirect=/pages/profile.html';
   }
 };
 

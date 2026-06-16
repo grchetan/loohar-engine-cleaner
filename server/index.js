@@ -34,12 +34,19 @@ app.use(
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 200,
-  message: 'Too many requests, try again later.',
+  message: { success: false, message: 'Too many requests, try again later.' },
+  handler: (req, res, next, options) => {
+    res.status(options.statusCode).json(options.message);
+  }
 });
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 15,
-  message: 'Too many auth attempts.',
+  skip: (req, res) => req.path.endsWith('/me') || req.path.endsWith('/logout'),
+  message: { success: false, message: 'Too many auth attempts.' },
+  handler: (req, res, next, options) => {
+    res.status(options.statusCode).json(options.message);
+  }
 });
 app.use('/api/', limiter);
 app.use('/api/auth/', authLimiter);

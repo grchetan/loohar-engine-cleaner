@@ -5,6 +5,11 @@
 
 // Load all user orders
 window.loadUserOrders = async () => {
+  if (!isLoggedIn()) {
+    window.location.href = '/pages/auth.html?redirect=/pages/orders.html';
+    return;
+  }
+
   const container = document.getElementById('ordersListContainer');
   const loader = document.getElementById('ordersLoader');
   if (!container) return;
@@ -59,12 +64,24 @@ window.loadUserOrders = async () => {
 
   } catch (err) {
     if (loader) loader.style.display = 'none';
+    if (err.message.includes('authorized') || err.message.includes('token') || err.message.includes('login') || err.message.includes('Server error')) {
+      clearToken();
+      clearUser();
+      window.location.href = '/pages/auth.html?redirect=/pages/orders.html';
+      return;
+    }
     toast.error('Failed to load order history');
   }
 };
 
 // Load specific order detail (tracking, cancellations, invoices)
 window.loadOrderDetail = async () => {
+  if (!isLoggedIn()) {
+    const orderId = new URLSearchParams(window.location.search).get('orderId');
+    window.location.href = `/pages/auth.html?redirect=${encodeURIComponent('/pages/order-detail.html?orderId=' + (orderId || ''))}`;
+    return;
+  }
+
   const orderId = new URLSearchParams(window.location.search).get('orderId');
   if (!orderId) {
     window.location.href = '/pages/orders.html';
@@ -151,6 +168,12 @@ window.loadOrderDetail = async () => {
 
   } catch (err) {
     if (loader) loader.style.display = 'none';
+    if (err.message.includes('authorized') || err.message.includes('token') || err.message.includes('login') || err.message.includes('Server error')) {
+      clearToken();
+      clearUser();
+      window.location.href = '/pages/auth.html?redirect=/pages/orders.html';
+      return;
+    }
     toast.error('Failed to load order details');
   }
 };
